@@ -2,6 +2,8 @@
 
 A structured brand knowledge builder PWA that enables founders, brand strategists, and designers to create, manage, and preview modular brand guidelines from structured data.
 
+🌐 **Live Demo**: [https://brand-guidelines-system.vercel.app/](https://brand-guidelines-system.vercel.app/)
+
 ![License](https://img.shields.io/badge/status-v0.1_frozen-blue)
 ![PWA](https://img.shields.io/badge/PWA-offline_capable-emerald)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.2-blue)
