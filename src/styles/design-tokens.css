@@ -1,0 +1,64 @@
+/* Design Tokens - Brand Guidelines System */
+:root {
+  /* Color Palette - Slate, Zinc, and Restrained Accents */
+  --bg-app: #f8fafc;
+  --bg-sidebar: #0f172a;
+  --bg-sidebar-hover: #1e293b;
+  --bg-sidebar-active: #334155;
+  --bg-card: #ffffff;
+  --bg-muted: #f1f5f9;
+  --bg-input: #ffffff;
+  
+  /* Text Colors */
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-subtle: #64748b;
+  --text-inverse: #f8fafc;
+  --text-inverse-muted: #94a3b8;
+  
+  /* Borders */
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-focus: #2563eb;
+  --border-sidebar: #1e293b;
+  
+  /* Restrained Accents */
+  --accent-primary: #2563eb;       /* Royal Blue */
+  --accent-primary-hover: #1d4ed8;
+  --accent-light: #eff6ff;
+  --accent-teal: #0d9488;          /* Teal for secondary highlights */
+  --accent-amber: #d97706;         /* Amber for started states */
+  
+  /* Status Colors */
+  --status-complete-bg: #ecfdf5;
+  --status-complete-text: #047857;
+  --status-complete-border: #a7f3d0;
+  
+  --status-started-bg: #fffbeb;
+  --status-started-text: #b45309;
+  --status-started-border: #fde68a;
+  
+  --status-empty-bg: #f8fafc;
+  --text-empty-status: #64748b;
+  --border-empty-status: #cbd5e1;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Newsreader', Georgia, Cambria, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}

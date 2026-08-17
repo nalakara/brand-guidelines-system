@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1e293b" />
+    <meta name="description" content="Structured Brand Knowledge Builder & Guidelines Generator" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <title>Brand Guidelines System</title>
+    <!-- Google Fonts: Inter & Newsreader for clean editorial typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Service Worker registration with toggle support
+      if ('serviceWorker' in navigator && window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
+        window.addEventListener('load', () => {
+          // Dev override check: disable sw if localStorage flag is set
+          if (localStorage.getItem('SW_DISABLED') === 'true') {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+              for (let reg of registrations) reg.unregister();
+            });
+            console.log('[PWA] Service worker disabled via SW_DISABLED flag');
+            return;
+          }
+          navigator.serviceWorker.register('/sw.js').then(
+            reg => console.log('[PWA] Service Worker registered with scope:', reg.scope),
+            err => console.warn('[PWA] Service Worker registration failed:', err)
+          );
+        });
+      }
+    </script>
+  </body>
+</html>
