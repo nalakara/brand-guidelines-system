@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Brand, ModuleId, Language } from '../types/brand';
-import { ALL_MODULE_IDS, MODULE_REGISTRY, getModuleCompletion } from '../modules/registry';
+import { ALL_MODULE_IDS, MODULE_GROUPS, MODULE_REGISTRY, getModuleCompletion } from '../modules/registry';
 import { t } from '../i18n/translations';
 import {
   Building2,
@@ -10,6 +10,9 @@ import {
   MessageSquareText,
   Palette,
   Megaphone,
+  BookOpen,
+  Image,
+  FileCheck,
   Plus,
   SlidersHorizontal,
   ChevronDown,
@@ -38,7 +41,10 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   Sparkles: <Sparkles size={16} />,
   MessageSquareText: <MessageSquareText size={16} />,
   Palette: <Palette size={16} />,
-  Megaphone: <Megaphone size={16} />
+  Megaphone: <Megaphone size={16} />,
+  BookOpen: <BookOpen size={16} />,
+  Image: <Image size={16} />,
+  FileCheck: <FileCheck size={16} />
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -180,25 +186,43 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         <nav className="sidebar-nav">
-          {ALL_MODULE_IDS.filter((mId) => activeModules.includes(mId)).map((mId) => {
-            const def = MODULE_REGISTRY[mId];
-            const isSelected = activeModuleId === mId;
-            const completion = getModuleCompletion(activeBrand, mId);
+          {MODULE_GROUPS.map((group) => {
+            const filteredModuleIds = group.moduleIds.filter((mId) => {
+              if (activeModules.includes(mId)) return true;
+              if (activeModules.includes('visualBasics') && ['visualKnowledge', 'visualAssets', 'visualRules'].includes(mId)) return true;
+              return false;
+            });
+            if (filteredModuleIds.length === 0) return null;
 
             return (
-              <button
-                key={mId}
-                className={`nav-module-item ${isSelected ? 'active' : ''}`}
-                onClick={() => onSelectModule(mId)}
-              >
-                <div className="nav-module-info">
-                  {ICON_MAP[def.iconName]}
-                  <span>{t(def.nameKey, uiLanguage)}</span>
+              <div key={group.domainKey} className="sidebar-domain-group">
+                <div className="sidebar-domain-label">
+                  {t(group.domainKey, uiLanguage)}
                 </div>
-                <span className={`badge-status ${completion}`}>
-                  {completion === 'complete' ? t('statusDone', uiLanguage) : completion === 'started' ? t('statusStarted', uiLanguage) : t('statusEmpty', uiLanguage)}
-                </span>
-              </button>
+                <div className="sidebar-domain-modules">
+                  {filteredModuleIds.map((mId) => {
+                    const def = MODULE_REGISTRY[mId];
+                    const isSelected = activeModuleId === mId;
+                    const completion = getModuleCompletion(activeBrand, mId);
+
+                    return (
+                      <button
+                        key={mId}
+                        className={`nav-module-item ${isSelected ? 'active' : ''}`}
+                        onClick={() => onSelectModule(mId)}
+                      >
+                        <div className="nav-module-info">
+                          {ICON_MAP[def.iconName]}
+                          <span>{t(def.nameKey, uiLanguage)}</span>
+                        </div>
+                        <span className={`badge-status ${completion}`}>
+                          {completion === 'complete' ? t('statusDone', uiLanguage) : completion === 'started' ? t('statusStarted', uiLanguage) : t('statusEmpty', uiLanguage)}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             );
           })}
 

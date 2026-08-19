@@ -111,7 +111,29 @@ html, body {
   padding: 12px 12px 20px;
   display: flex;
   flex-direction: column;
+  gap: 16px;
+}
+
+.sidebar-domain-group {
+  display: flex;
+  flex-direction: column;
   gap: 4px;
+}
+
+.sidebar-domain-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-inverse-muted);
+  opacity: 0.65;
+  padding: 4px 10px 2px;
+}
+
+.sidebar-domain-modules {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .nav-module-item {

@@ -22,13 +22,35 @@ export interface ModuleDefinition {
   calculateCompletion: (data?: any) => CompletionStatus;
 }
 
+export interface ModuleGroup {
+  domainKey: string;
+  moduleIds: ModuleId[];
+}
+
+export const MODULE_GROUPS: ModuleGroup[] = [
+  {
+    domainKey: 'domainBrand',
+    moduleIds: ['overview']
+  },
+  {
+    domainKey: 'domainVisualGuidelines',
+    moduleIds: ['visualKnowledge', 'visualAssets', 'visualRules']
+  },
+  {
+    domainKey: 'domainFoundation',
+    moduleIds: ['strategy', 'positioning', 'personality', 'voiceTone', 'messaging']
+  }
+];
+
 export const ALL_MODULE_IDS: ModuleId[] = [
   'overview',
+  'visualKnowledge',
+  'visualAssets',
+  'visualRules',
   'strategy',
   'positioning',
   'personality',
   'voiceTone',
-  'visualBasics',
   'messaging'
 ];
 
@@ -55,6 +77,74 @@ export const MODULE_REGISTRY: Record<ModuleId, ModuleDefinition> = {
       
       if (!hasName && !hasOneLiner && !hasLongDesc && !hasCategory) return 'empty';
       if (hasName && (hasOneLiner || hasLongDesc) && hasCategory) return 'complete';
+      return 'started';
+    }
+  },
+  visualKnowledge: {
+    id: 'visualKnowledge',
+    nameKey: 'moduleVisualKnowledge',
+    shortDescription: 'Definitions, typography, color palettes, and visual identity knowledge.',
+    iconName: 'BookOpen',
+    defaultData: (): VisualBasicsModule => ({
+      logoUsageNotes: { en: '', id: '' },
+      logoVariants: defaultLogoVariants,
+      primaryColors: [],
+      secondaryColors: [],
+      typographyNotes: { en: '', id: '' },
+      imageryDirection: { en: '', id: '' },
+      layoutNotes: { en: '', id: '' }
+    }),
+    calculateCompletion: (data?: VisualBasicsModule): CompletionStatus => {
+      if (!data) return 'empty';
+      const colorsCount = (data.primaryColors?.length || 0) + (data.secondaryColors?.length || 0);
+      const hasLogo = Boolean(getLocalizedText(data.logoUsageNotes, 'en').text);
+      const variantsCount = data.logoVariants?.length || 0;
+      const hasTypo = Boolean(getLocalizedText(data.typographyNotes, 'en').text);
+      
+      if (colorsCount === 0 && !hasLogo && variantsCount === 0 && !hasTypo) return 'empty';
+      if ((colorsCount >= 2 || variantsCount >= 2) && (hasLogo || hasTypo)) return 'complete';
+      return 'started';
+    }
+  },
+  visualAssets: {
+    id: 'visualAssets',
+    nameKey: 'moduleVisualAssets',
+    shortDescription: 'Logo files, typography packages, media, and visual identity files.',
+    iconName: 'Image',
+    defaultData: () => ({}),
+    calculateCompletion: (): CompletionStatus => 'empty'
+  },
+  visualRules: {
+    id: 'visualRules',
+    nameKey: 'moduleVisualRules',
+    shortDescription: 'Do & don\'ts, spacing constraints, clear space, and usage guidelines.',
+    iconName: 'FileCheck',
+    defaultData: () => ({}),
+    calculateCompletion: (): CompletionStatus => 'empty'
+  },
+  visualBasics: {
+    id: 'visualBasics',
+    nameKey: 'moduleVisualBasics',
+    shortDescription: 'Logo rules, logo variants, color palettes, typography, and imagery.',
+    iconName: 'Palette',
+    defaultData: (): VisualBasicsModule => ({
+      logoUsageNotes: { en: '', id: '' },
+      logoVariants: defaultLogoVariants,
+      primaryColors: [],
+      secondaryColors: [],
+      typographyNotes: { en: '', id: '' },
+      imageryDirection: { en: '', id: '' },
+      layoutNotes: { en: '', id: '' }
+    }),
+    calculateCompletion: (data?: VisualBasicsModule): CompletionStatus => {
+      if (!data) return 'empty';
+      const colorsCount = (data.primaryColors?.length || 0) + (data.secondaryColors?.length || 0);
+      const hasLogo = Boolean(getLocalizedText(data.logoUsageNotes, 'en').text);
+      const variantsCount = data.logoVariants?.length || 0;
+      const hasTypo = Boolean(getLocalizedText(data.typographyNotes, 'en').text);
+      
+      if (colorsCount === 0 && !hasLogo && variantsCount === 0 && !hasTypo) return 'empty';
+      if ((colorsCount >= 2 || variantsCount >= 2) && (hasLogo || hasTypo)) return 'complete';
       return 'started';
     }
   },
@@ -157,32 +247,6 @@ export const MODULE_REGISTRY: Record<ModuleId, ModuleDefinition> = {
       return 'started';
     }
   },
-  visualBasics: {
-    id: 'visualBasics',
-    nameKey: 'moduleVisualBasics',
-    shortDescription: 'Logo rules, logo variants, color palettes, typography, and imagery.',
-    iconName: 'Palette',
-    defaultData: (): VisualBasicsModule => ({
-      logoUsageNotes: { en: '', id: '' },
-      logoVariants: defaultLogoVariants,
-      primaryColors: [],
-      secondaryColors: [],
-      typographyNotes: { en: '', id: '' },
-      imageryDirection: { en: '', id: '' },
-      layoutNotes: { en: '', id: '' }
-    }),
-    calculateCompletion: (data?: VisualBasicsModule): CompletionStatus => {
-      if (!data) return 'empty';
-      const colorsCount = (data.primaryColors?.length || 0) + (data.secondaryColors?.length || 0);
-      const hasLogo = Boolean(getLocalizedText(data.logoUsageNotes, 'en').text);
-      const variantsCount = data.logoVariants?.length || 0;
-      const hasTypo = Boolean(getLocalizedText(data.typographyNotes, 'en').text);
-      
-      if (colorsCount === 0 && !hasLogo && variantsCount === 0 && !hasTypo) return 'empty';
-      if ((colorsCount >= 2 || variantsCount >= 2) && (hasLogo || hasTypo)) return 'complete';
-      return 'started';
-    }
-  },
   messaging: {
     id: 'messaging',
     nameKey: 'moduleMessaging',
@@ -209,6 +273,8 @@ export const MODULE_REGISTRY: Record<ModuleId, ModuleDefinition> = {
 };
 
 export function getModuleCompletion(brand: Brand, moduleId: ModuleId): CompletionStatus {
-  const moduleData = brand.modules[moduleId];
+  // If checking visualKnowledge, fallback to visualBasics data if visualKnowledge is not directly present
+  const targetKey = moduleId === 'visualKnowledge' && !brand.modules.visualKnowledge ? 'visualBasics' : moduleId;
+  const moduleData = brand.modules[targetKey as ModuleId];
   return MODULE_REGISTRY[moduleId].calculateCompletion(moduleData);
 }

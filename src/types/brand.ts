@@ -5,6 +5,9 @@ export type ModuleId =
   | 'personality'
   | 'voiceTone'
   | 'visualBasics'
+  | 'visualKnowledge'
+  | 'visualAssets'
+  | 'visualRules'
   | 'messaging';
 
 export type Language = 'en' | 'id';
@@ -74,6 +77,263 @@ export interface ColorSwatch {
   name: LocalizedString;
   hex: string;
   usage?: LocalizedString;
+}
+
+export type ColorRole =
+  | 'primary'
+  | 'secondary'
+  | 'accent'
+  | 'neutral'
+  | 'supporting'
+  | 'custom';
+
+export interface ColorItem {
+  id: string;
+  name: string;
+  role: ColorRole;
+  hex: string;
+  rgb?: string;
+  hsl?: string;
+  cmyk?: string;
+  description?: LocalizedString;
+  updatedAt?: string;
+}
+
+export type FontRole =
+  | 'primary'
+  | 'secondary'
+  | 'supporting'
+  | 'custom';
+
+export interface FontItem {
+  id: string;
+  name: string;
+  role: FontRole;
+  weights: number[]; // e.g. [400, 500, 700]
+  styles: ('normal' | 'italic')[];
+  assetReference?: string;
+  updatedAt?: string;
+}
+
+export type TypeStyleCategory =
+  | 'display'
+  | 'heading'
+  | 'body'
+  | 'caption'
+  | 'custom';
+
+export interface TypeStyleItem {
+  id: string;
+  name: string;
+  category: TypeStyleCategory;
+  fontFamilyId: string; // References FontItem.id
+  weight: number;
+  sizePx: number;
+  lineHeight: number; // e.g. 1.2
+  letterSpacingEm: number; // e.g. -0.02
+  sampleText?: LocalizedString;
+  updatedAt?: string;
+}
+
+export interface PhotographyData {
+  description?: LocalizedString;
+  mood?: string[];
+  subjects?: string[];
+  lighting?: string[];
+  composition?: string[];
+  colorTreatment?: string[];
+}
+
+export interface ArtDirectionData {
+  visualMood?: LocalizedString;
+  subjectDirection?: LocalizedString;
+  compositionDirection?: LocalizedString;
+  treatment?: LocalizedString;
+}
+
+export interface ImageCharacteristicsData {
+  mood?: string[];
+  lighting?: string[];
+  composition?: string[];
+  color?: string[];
+}
+
+export interface ImageryData {
+  photography?: PhotographyData;
+  artDirection?: ArtDirectionData;
+  characteristics?: ImageCharacteristicsData;
+}
+
+export interface GraphicCategoryData {
+  description?: LocalizedString;
+  characteristics?: string[];
+}
+
+export interface IllustrationCategoryData extends GraphicCategoryData {
+  style?: string[];
+  subject?: string[];
+  treatment?: LocalizedString;
+}
+
+export interface GraphicLanguageData {
+  shapes?: GraphicCategoryData;
+  patterns?: GraphicCategoryData;
+  illustration?: IllustrationCategoryData;
+  iconography?: GraphicCategoryData;
+  lines?: GraphicCategoryData;
+  decorativeElements?: GraphicCategoryData;
+}
+
+export interface GridData {
+  description?: LocalizedString;
+  type?: 'column' | 'modular' | 'baseline' | 'freeform' | 'custom';
+  columns?: number;
+  gutterPx?: number;
+  marginPx?: number;
+  characteristics?: string[];
+}
+
+export interface SpacingData {
+  description?: LocalizedString;
+  baseUnitPx?: number;
+  characteristics?: string[];
+}
+
+export interface AlignmentData {
+  description?: LocalizedString;
+  preferredAlignment?: 'left' | 'center' | 'right' | 'edge' | 'asymmetrical' | 'custom';
+  characteristics?: string[];
+}
+
+export interface LayoutCategoryData {
+  description?: LocalizedString;
+  characteristics?: string[];
+}
+
+export interface LayoutCompositionData {
+  grid?: GridData;
+  spacing?: SpacingData;
+  alignment?: AlignmentData;
+  proportion?: LayoutCategoryData;
+  hierarchy?: LayoutCategoryData;
+  compositionPrinciples?: LayoutCategoryData;
+}
+
+export type AssetCategory =
+  | 'logos'
+  | 'fonts'
+  | 'images'
+  | 'illustrations'
+  | 'icons'
+  | 'patterns'
+  | 'other';
+
+export interface AssetFile {
+  id: string;
+  filename: string;
+  format: string;
+  sizeBytes: number;
+  dataUrl?: string; // Local storage base64 data url for preview/storage
+  uploadedAt: string;
+}
+
+export interface AssetReference {
+  moduleId: string; // e.g. 'logoSystem', 'typographySystem'
+  entityName: string; // e.g. 'Northstar Primary Logo' or 'Heading 1'
+}
+
+export interface VisualAssetItem {
+  id: string;
+  name: string;
+  category: AssetCategory;
+  notes?: LocalizedString;
+  files: AssetFile[]; // Supports font families with multiple files or single file
+  references?: AssetReference[];
+  updatedAt?: string;
+}
+
+export type RuleType =
+  | 'usage'
+  | 'restriction'
+  | 'preference'
+  | 'requirement';
+
+export type RuleContextCategory =
+  | 'logo'
+  | 'color'
+  | 'typography'
+  | 'imagery'
+  | 'graphicLanguage'
+  | 'layout'
+  | 'general';
+
+export interface RuleEntityReference {
+  type: 'knowledge' | 'asset';
+  moduleId: string; // e.g. 'logoSystem', 'colorSystem', 'visualAssets'
+  entityId: string;
+  label: string; // e.g. 'Primary Logo' or 'Inter-Bold.woff2'
+}
+
+export interface VisualRuleItem {
+  id: string;
+  name: string;
+  type: RuleType;
+  context: RuleContextCategory;
+  guidance: LocalizedString;
+  tags?: string[];
+  references?: RuleEntityReference[];
+  updatedAt?: string;
+}
+
+export type LogoType =
+  | 'primaryLogo'
+  | 'secondaryLogo'
+  | 'symbolMark'
+  | 'wordmark'
+  | 'monogram'
+  | 'lockup'
+  | 'badgeEmblem'
+  | 'other';
+
+export type LogoRole =
+  | 'primary'
+  | 'secondary'
+  | 'supporting'
+  | 'campaign'
+  | 'custom';
+
+export type VariantColorType =
+  | 'fullColor'
+  | 'white'
+  | 'black'
+  | 'monochrome'
+  | 'reversed'
+  | 'custom';
+
+export interface LogoItemVariant {
+  id: string;
+  name: LocalizedString;
+  colorType: VariantColorType;
+  previewUrl?: string;
+  assetReference?: string;
+  usageNotes?: LocalizedString;
+}
+
+export interface LogoItemStructure {
+  hasSymbol?: boolean;
+  hasWordmark?: boolean;
+  composition?: LocalizedString;
+}
+
+export interface LogoItem {
+  id: string;
+  name: string;
+  type: LogoType;
+  role?: LogoRole;
+  description?: LocalizedString;
+  variants: LogoItemVariant[];
+  structure?: LogoItemStructure;
+  updatedAt?: string;
 }
 
 export type LogoVariantKey =
@@ -146,11 +406,18 @@ export interface VoiceToneModule {
 export interface VisualBasicsModule {
   logoUsageNotes: LocalizedString;
   logoVariants: LogoVariant[];
+  logos?: LogoItem[];
   primaryColors: ColorSwatch[];
   secondaryColors: ColorSwatch[];
+  colors?: ColorItem[];
+  fonts?: FontItem[];
+  typeStyles?: TypeStyleItem[];
   typographyNotes: LocalizedString;
   imageryDirection: LocalizedString;
+  imagery?: ImageryData;
+  graphicLanguage?: GraphicLanguageData;
   layoutNotes: LocalizedString;
+  layoutComposition?: LayoutCompositionData;
 }
 
 export interface MessagingModule {
@@ -168,6 +435,9 @@ export interface BrandModulesData {
   personality?: PersonalityModule;
   voiceTone?: VoiceToneModule;
   visualBasics?: VisualBasicsModule;
+  visualKnowledge?: VisualBasicsModule;
+  visualAssets?: VisualAssetItem[];
+  visualRules?: VisualRuleItem[];
   messaging?: MessagingModule;
 }
 

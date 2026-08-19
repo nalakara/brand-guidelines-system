@@ -21,7 +21,14 @@ import { StrategyEditor } from './components/editors/StrategyEditor';
 import { PositioningEditor } from './components/editors/PositioningEditor';
 import { PersonalityEditor } from './components/editors/PersonalityEditor';
 import { VoiceToneEditor } from './components/editors/VoiceToneEditor';
-import { VisualBasicsEditor } from './components/editors/VisualBasicsEditor';
+import { LogoSystemEditor } from './components/editors/LogoSystemEditor';
+import { ColorSystemEditor } from './components/editors/ColorSystemEditor';
+import { TypographySystemEditor } from './components/editors/TypographySystemEditor';
+import { ImageryEditor } from './components/editors/ImageryEditor';
+import { GraphicLanguageEditor } from './components/editors/GraphicLanguageEditor';
+import { LayoutCompositionEditor } from './components/editors/LayoutCompositionEditor';
+import { VisualAssetsEditor } from './components/editors/VisualAssetsEditor';
+import { VisualRulesEditor } from './components/editors/VisualRulesEditor';
 import { MessagingEditor } from './components/editors/MessagingEditor';
 
 export const App: React.FC = () => {
@@ -32,6 +39,10 @@ export const App: React.FC = () => {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isModuleManagerOpen, setIsModuleManagerOpen] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+
+  const [visualKnowledgeTab, setVisualKnowledgeTab] = useState<
+    'logo' | 'color' | 'typography' | 'imagery' | 'graphicLanguage' | 'layoutComposition'
+  >('logo');
 
   // Multilingual State
   const [uiLanguage, setUiLanguage] = useState<Language>('en');
@@ -225,12 +236,118 @@ export const App: React.FC = () => {
                     onChange={(updated) => handleUpdateModuleData('voiceTone', updated)}
                   />
                 )}
-                {activeModuleId === 'visualBasics' && (
-                  <VisualBasicsEditor
-                    data={activeBrand.modules.visualBasics}
+                {(activeModuleId === 'visualBasics' || activeModuleId === 'visualKnowledge') && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    {/* Sub-navigation tabs for Visual Knowledge */}
+                    <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border-light)', paddingBottom: '12px' }}>
+                      <button
+                        className={`btn ${visualKnowledgeTab === 'logo' ? 'btn-primary' : 'btn-secondary'}`}
+                        style={{ fontSize: '0.86rem' }}
+                        onClick={() => setVisualKnowledgeTab('logo')}
+                      >
+                        Logo System
+                      </button>
+                      <button
+                        className={`btn ${visualKnowledgeTab === 'color' ? 'btn-primary' : 'btn-secondary'}`}
+                        style={{ fontSize: '0.86rem' }}
+                        onClick={() => setVisualKnowledgeTab('color')}
+                      >
+                        Color System
+                      </button>
+                      <button
+                        className={`btn ${visualKnowledgeTab === 'typography' ? 'btn-primary' : 'btn-secondary'}`}
+                        style={{ fontSize: '0.86rem' }}
+                        onClick={() => setVisualKnowledgeTab('typography')}
+                      >
+                        Typography System
+                      </button>
+                      <button
+                        className={`btn ${visualKnowledgeTab === 'imagery' ? 'btn-primary' : 'btn-secondary'}`}
+                        style={{ fontSize: '0.86rem' }}
+                        onClick={() => setVisualKnowledgeTab('imagery')}
+                      >
+                        Imagery
+                      </button>
+                      <button
+                        className={`btn ${visualKnowledgeTab === 'graphicLanguage' ? 'btn-primary' : 'btn-secondary'}`}
+                        style={{ fontSize: '0.86rem' }}
+                        onClick={() => setVisualKnowledgeTab('graphicLanguage')}
+                      >
+                        Graphic Language
+                      </button>
+                      <button
+                        className={`btn ${visualKnowledgeTab === 'layoutComposition' ? 'btn-primary' : 'btn-secondary'}`}
+                        style={{ fontSize: '0.86rem' }}
+                        onClick={() => setVisualKnowledgeTab('layoutComposition')}
+                      >
+                        Layout & Composition
+                      </button>
+                    </div>
+
+                    {visualKnowledgeTab === 'logo' && (
+                      <LogoSystemEditor
+                        data={activeBrand.modules.visualBasics}
+                        uiLanguage={uiLanguage}
+                        contentLanguage={contentLanguage}
+                        onChange={(updated) => handleUpdateModuleData('visualBasics', updated)}
+                      />
+                    )}
+                    {visualKnowledgeTab === 'color' && (
+                      <ColorSystemEditor
+                        data={activeBrand.modules.visualBasics}
+                        uiLanguage={uiLanguage}
+                        contentLanguage={contentLanguage}
+                        onChange={(updated) => handleUpdateModuleData('visualBasics', updated)}
+                      />
+                    )}
+                    {visualKnowledgeTab === 'typography' && (
+                      <TypographySystemEditor
+                        data={activeBrand.modules.visualBasics}
+                        uiLanguage={uiLanguage}
+                        contentLanguage={contentLanguage}
+                        onChange={(updated) => handleUpdateModuleData('visualBasics', updated)}
+                      />
+                    )}
+                    {visualKnowledgeTab === 'imagery' && (
+                      <ImageryEditor
+                        data={activeBrand.modules.visualBasics}
+                        uiLanguage={uiLanguage}
+                        contentLanguage={contentLanguage}
+                        onChange={(updated) => handleUpdateModuleData('visualBasics', updated)}
+                      />
+                    )}
+                    {visualKnowledgeTab === 'graphicLanguage' && (
+                      <GraphicLanguageEditor
+                        data={activeBrand.modules.visualBasics}
+                        uiLanguage={uiLanguage}
+                        contentLanguage={contentLanguage}
+                        onChange={(updated) => handleUpdateModuleData('visualBasics', updated)}
+                      />
+                    )}
+                    {visualKnowledgeTab === 'layoutComposition' && (
+                      <LayoutCompositionEditor
+                        data={activeBrand.modules.visualBasics}
+                        uiLanguage={uiLanguage}
+                        contentLanguage={contentLanguage}
+                        onChange={(updated) => handleUpdateModuleData('visualBasics', updated)}
+                      />
+                    )}
+                  </div>
+                )}
+                {activeModuleId === 'visualAssets' && (
+                  <VisualAssetsEditor
+                    data={activeBrand.modules.visualAssets || []}
                     uiLanguage={uiLanguage}
                     contentLanguage={contentLanguage}
-                    onChange={(updated) => handleUpdateModuleData('visualBasics', updated)}
+                    onChange={(updated) => handleUpdateModuleData('visualAssets', updated)}
+                  />
+                )}
+                {activeModuleId === 'visualRules' && (
+                  <VisualRulesEditor
+                    data={activeBrand.modules.visualRules || []}
+                    uiLanguage={uiLanguage}
+                    contentLanguage={contentLanguage}
+                    onChange={(updated) => handleUpdateModuleData('visualRules', updated)}
                   />
                 )}
                 {activeModuleId === 'messaging' && (

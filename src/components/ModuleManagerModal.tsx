@@ -42,7 +42,7 @@ export const ModuleManagerModal: React.FC<ModuleManagerModalProps> = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {ALL_MODULE_IDS.map((mId) => {
               const def = MODULE_REGISTRY[mId];
-              const isActive = activeSet.has(mId);
+              const isActive = activeSet.has(mId) || (activeSet.has('visualBasics') && ['visualKnowledge', 'visualAssets', 'visualRules'].includes(mId));
               const completion = getModuleCompletion(brand, mId);
 
               return (
