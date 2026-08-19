@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
-import { PersonalityModule, Language, WeArePair, updateLocalizedString } from '../../types/brand';
-import { LocalizedInput } from '../ui/LocalizedInput';
+import React from 'react';
+import {
+  PersonalityModule,
+  Language,
+  PersonalityTraitEntity,
+  WeArePairEntity,
+  LocalizedString
+} from '../../types/brand';
+import { LocalizedInput, LocalizedTextarea } from '../ui/LocalizedInput';
 import { t } from '../../i18n/translations';
-import { Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, Sparkles, Scale } from 'lucide-react';
 
 interface PersonalityEditorProps {
   data?: PersonalityModule;
@@ -10,6 +16,13 @@ interface PersonalityEditorProps {
   contentLanguage: Language;
   onChange: (updated: PersonalityModule) => void;
 }
+
+const DIMENSION_SLIDERS = [
+  { key: 'classicToModern' as const, leftKey: 'sliderClassic', rightKey: 'sliderModern' },
+  { key: 'seriousToPlayful' as const, leftKey: 'sliderSerious', rightKey: 'sliderPlayful' },
+  { key: 'reservedToExpressive' as const, leftKey: 'sliderReserved', rightKey: 'sliderExpressive' },
+  { key: 'practicalToVisionary' as const, leftKey: 'sliderPractical', rightKey: 'sliderVisionary' }
+];
 
 export const PersonalityEditor: React.FC<PersonalityEditorProps> = ({
   data,
@@ -29,8 +42,6 @@ export const PersonalityEditor: React.FC<PersonalityEditorProps> = ({
     weAreWeAreNot: []
   };
 
-  const [traitInput, setTraitInput] = useState('');
-
   const updateField = (field: keyof PersonalityModule, val: any) => {
     onChange({ ...current, [field]: val });
   };
@@ -45,222 +56,262 @@ export const PersonalityEditor: React.FC<PersonalityEditorProps> = ({
     });
   };
 
+  // --- Traits ---
   const addTrait = () => {
-    if (!traitInput.trim()) return;
-    const newTraitObj = { [contentLanguage]: traitInput.trim() };
-    updateField('traits', [...current.traits, newTraitObj]);
-    setTraitInput('');
+    const newTrait: PersonalityTraitEntity = {
+      id: 'trait-' + Date.now(),
+      trait: { en: '', id: '' },
+      definition: { en: '', id: '' },
+      spectrumPosition: 50
+    };
+    updateField('traits', [...current.traits, newTrait]);
   };
 
-  const removeTrait = (idx: number) => {
-    updateField('traits', current.traits.filter((_, i) => i !== idx));
+  const updateTrait = (id: string, key: 'trait' | 'definition', val: LocalizedString) => {
+    const updated = current.traits.map((t) => {
+      if (t.id !== id) return t;
+      return {
+        ...t,
+        [key]: val
+      };
+    });
+    updateField('traits', updated);
   };
 
+  const removeTrait = (id: string) => {
+    updateField('traits', current.traits.filter((t) => t.id !== id));
+  };
+
+  // --- We Are / We Are Not Pairs ---
   const addPair = () => {
-    const newPair: WeArePair = {
+    const newPair: WeArePairEntity = {
       id: 'pair-' + Date.now(),
       weAre: { en: '', id: '' },
-      weAreNot: { en: '', id: '' }
+      weAreNot: { en: '', id: '' },
+      rationale: { en: '', id: '' }
     };
     updateField('weAreWeAreNot', [...current.weAreWeAreNot, newPair]);
   };
 
-  const updatePair = (id: string, field: 'weAre' | 'weAreNot', textVal: string) => {
-    const updated = current.weAreWeAreNot.map(p => {
+  const updatePair = (id: string, key: 'weAre' | 'weAreNot' | 'rationale', val: LocalizedString) => {
+    const updated = current.weAreWeAreNot.map((p) => {
       if (p.id !== id) return p;
       return {
         ...p,
-        [field]: updateLocalizedString(p[field], contentLanguage, textVal)
+        [key]: val
       };
     });
     updateField('weAreWeAreNot', updated);
   };
 
   const removePair = (id: string) => {
-    updateField('weAreWeAreNot', current.weAreWeAreNot.filter(p => p.id !== id));
+    updateField('weAreWeAreNot', current.weAreWeAreNot.filter((p) => p.id !== id));
   };
 
   return (
-    <div className="editor-card">
-      <div className="editor-header">
-        <div>
-          <h2 className="editor-title">{t('personalityTitle', uiLanguage)}</h2>
-          <p className="editor-subtitle">{t('personalitySubtitle', uiLanguage)}</p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Archetype & Sliders Header */}
+      <div className="editor-card">
+        <div className="editor-header">
+          <div>
+            <h2 className="editor-title">{t('personalityTitle', uiLanguage)}</h2>
+            <p className="editor-subtitle">{t('personalitySubtitle', uiLanguage)}</p>
+          </div>
+        </div>
+
+        <LocalizedInput
+          label={t('archetypeLabel', uiLanguage)}
+          hint={t('archetypeHint', uiLanguage)}
+          placeholder={t('archetypePlaceholder', uiLanguage)}
+          value={current.archetype}
+          contentLanguage={contentLanguage}
+          onChange={(val) => updateField('archetype', val)}
+        />
+
+        <div style={{ marginTop: '24px' }}>
+          <label className="form-label" style={{ fontWeight: 600, marginBottom: '16px', display: 'block' }}>
+            {t('slidersTitle', uiLanguage)}
+          </label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {DIMENSION_SLIDERS.map((slider) => {
+              const val = current.sliders[slider.key];
+              return (
+                <div key={slider.key} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 600 }}>
+                    <span style={{ color: val < 50 ? 'var(--accent-primary)' : 'var(--text-muted)' }}>
+                      {t(slider.leftKey, uiLanguage)}
+                    </span>
+                    <span style={{ color: val > 50 ? 'var(--accent-primary)' : 'var(--text-muted)' }}>
+                      {t(slider.rightKey, uiLanguage)}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={val}
+                    onChange={(e) => updateSlider(slider.key, Number(e.target.value))}
+                    style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--accent-primary)' }}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* Brand Traits */}
-      <div className="form-group">
-        <label className="form-label">{t('traitsLabel', uiLanguage)} ({contentLanguage.toUpperCase()})</label>
-        <p className="form-hint">{t('traitsHint', uiLanguage)}</p>
-
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-          <input
-            type="text"
-            className="form-control"
-            placeholder={t('traitInputPlaceholder', uiLanguage)}
-            value={traitInput}
-            onChange={(e) => setTraitInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTrait())}
-          />
-          <button type="button" className="btn btn-secondary" onClick={addTrait}>
-            <Plus size={16} /> {t('add', uiLanguage)}
+      {/* Personality Traits Entities */}
+      <div className="editor-card">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <div>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)' }}>
+              {t('traitsTitle', uiLanguage)}
+            </h3>
+            <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+              {t('traitsSubtitle', uiLanguage)}
+            </p>
+          </div>
+          <button type="button" className="btn btn-secondary btn-sm" onClick={addTrait}>
+            <Plus size={14} /> {t('addTrait', uiLanguage)}
           </button>
         </div>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-          {current.traits.map((tItem, idx) => {
-            const traitText = typeof tItem === 'string' ? tItem : (tItem?.[contentLanguage] || tItem?.en || '');
-            return (
-              <span
-                key={idx}
+        {current.traits.length === 0 ? (
+          <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', border: '1px dashed var(--border-light)', borderRadius: 'var(--radius-md)' }}>
+            <Sparkles size={24} style={{ margin: '0 auto 8px', opacity: 0.6 }} />
+            <p style={{ fontSize: '0.86rem' }}>{t('noTraitsDefined', uiLanguage)}</p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {current.traits.map((tr, idx) => (
+              <div
+                key={tr.id}
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '5px 12px',
-                  borderRadius: 'var(--radius-full)',
-                  backgroundColor: 'var(--accent-light)',
-                  color: 'var(--accent-primary)',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  border: '1px solid rgba(37, 99, 235, 0.2)'
+                  padding: '16px',
+                  backgroundColor: 'var(--bg-muted)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-light)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px'
                 }}
               >
-                {traitText}
-                <button
-                  type="button"
-                  onClick={() => removeTrait(idx)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent-primary)', display: 'inline-flex' }}
-                >
-                  <X size={14} />
-                </button>
-              </span>
-            );
-          })}
-        </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span className="badge badge-secondary" style={{ fontSize: '0.74rem' }}>
+                    Trait #{idx + 1}
+                  </span>
+                  <button
+                    type="button"
+                    className="btn-icon"
+                    style={{ color: '#ef4444' }}
+                    onClick={() => removeTrait(tr.id)}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+
+                <LocalizedInput
+                  label="Trait Name *"
+                  placeholder="e.g. Grounded, Thoughtful, Warm"
+                  value={tr.trait}
+                  contentLanguage={contentLanguage}
+                  onChange={(text) => updateTrait(tr.id, 'trait', text)}
+                />
+
+                <LocalizedTextarea
+                  label="Behavioral Definition & Nuance"
+                  placeholder="How does this trait show up in actual brand interactions?"
+                  rows={2}
+                  value={tr.definition}
+                  contentLanguage={contentLanguage}
+                  onChange={(text) => updateTrait(tr.id, 'definition', text)}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Sliders */}
-      <div className="form-group" style={{ backgroundColor: 'var(--bg-muted)', padding: '20px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
-        <label className="form-label" style={{ marginBottom: '16px', fontSize: '0.95rem' }}>
-          {t('spectrumTitle', uiLanguage)}
-        </label>
-
-        <div className="slider-group">
-          <div className="slider-labels">
-            <span>Classic ({100 - current.sliders.classicToModern}%)</span>
-            <span>Modern ({current.sliders.classicToModern}%)</span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            className="slider-input"
-            value={current.sliders.classicToModern}
-            onChange={(e) => updateSlider('classicToModern', Number(e.target.value))}
-          />
-        </div>
-
-        <div className="slider-group">
-          <div className="slider-labels">
-            <span>Serious ({100 - current.sliders.seriousToPlayful}%)</span>
-            <span>Playful ({current.sliders.seriousToPlayful}%)</span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            className="slider-input"
-            value={current.sliders.seriousToPlayful}
-            onChange={(e) => updateSlider('seriousToPlayful', Number(e.target.value))}
-          />
-        </div>
-
-        <div className="slider-group">
-          <div className="slider-labels">
-            <span>Reserved ({100 - current.sliders.reservedToExpressive}%)</span>
-            <span>Expressive ({current.sliders.reservedToExpressive}%)</span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            className="slider-input"
-            value={current.sliders.reservedToExpressive}
-            onChange={(e) => updateSlider('reservedToExpressive', Number(e.target.value))}
-          />
-        </div>
-
-        <div className="slider-group" style={{ marginBottom: 0 }}>
-          <div className="slider-labels">
-            <span>Practical ({100 - current.sliders.practicalToVisionary}%)</span>
-            <span>Visionary ({current.sliders.practicalToVisionary}%)</span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            className="slider-input"
-            value={current.sliders.practicalToVisionary}
-            onChange={(e) => updateSlider('practicalToVisionary', Number(e.target.value))}
-          />
-        </div>
-      </div>
-
-      <LocalizedInput
-        label={t('archetypeLabel', uiLanguage)}
-        placeholder={t('archetypePlaceholder', uiLanguage)}
-        value={current.archetype}
-        contentLanguage={contentLanguage}
-        onChange={(val) => updateField('archetype', val)}
-      />
-
-      {/* Contrast Pairs */}
-      <div className="form-group">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+      {/* We Are / We Are Not Pairs */}
+      <div className="editor-card">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
           <div>
-            <label className="form-label" style={{ marginBottom: 0 }}>{t('contrastPairsLabel', uiLanguage)}</label>
-            <p className="form-hint" style={{ marginBottom: 0 }}>{t('contrastPairsHint', uiLanguage)}</p>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)' }}>
+              {t('weAreWeAreNotTitle', uiLanguage)}
+            </h3>
+            <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+              {t('weAreWeAreNotSubtitle', uiLanguage)}
+            </p>
           </div>
           <button type="button" className="btn btn-secondary btn-sm" onClick={addPair}>
-            <Plus size={14} /> {t('addContrastPair', uiLanguage)}
+            <Plus size={14} /> {t('addPair', uiLanguage)}
           </button>
         </div>
 
-        <div className="repeatable-box">
-          {current.weAreWeAreNot.length === 0 ? (
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-subtle)', textAlign: 'center', padding: '12px' }}>
-              {t('noContrastPairs', uiLanguage)}
-            </p>
-          ) : (
-            current.weAreWeAreNot.map((pair) => (
-              <div key={pair.id} className="repeatable-item-block">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '10px', alignItems: 'center' }}>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder={`${t('weArePlaceholder', uiLanguage)} (${contentLanguage.toUpperCase()})`}
-                    value={typeof pair.weAre === 'string' ? pair.weAre : (pair.weAre?.[contentLanguage] || '')}
-                    style={{ borderColor: '#86efac' }}
-                    onChange={(e) => updatePair(pair.id, 'weAre', e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder={`${t('weAreNotPlaceholder', uiLanguage)} (${contentLanguage.toUpperCase()})`}
-                    value={typeof pair.weAreNot === 'string' ? pair.weAreNot : (pair.weAreNot?.[contentLanguage] || '')}
-                    style={{ borderColor: '#fca5a5' }}
-                    onChange={(e) => updatePair(pair.id, 'weAreNot', e.target.value)}
-                  />
-                  <button type="button" className="btn-icon" onClick={() => removePair(pair.id)}>
-                    <Trash2 size={16} />
+        {current.weAreWeAreNot.length === 0 ? (
+          <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', border: '1px dashed var(--border-light)', borderRadius: 'var(--radius-md)' }}>
+            <Scale size={24} style={{ margin: '0 auto 8px', opacity: 0.6 }} />
+            <p style={{ fontSize: '0.86rem' }}>{t('noPairsDefined', uiLanguage)}</p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {current.weAreWeAreNot.map((pair, idx) => (
+              <div
+                key={pair.id}
+                style={{
+                  padding: '16px',
+                  backgroundColor: 'var(--bg-muted)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-light)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span className="badge badge-secondary" style={{ fontSize: '0.74rem' }}>
+                    Guardrail #{idx + 1}
+                  </span>
+                  <button
+                    type="button"
+                    className="btn-icon"
+                    style={{ color: '#ef4444' }}
+                    onClick={() => removePair(pair.id)}
+                  >
+                    <Trash2 size={14} />
                   </button>
                 </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <LocalizedInput
+                    label="We Are *"
+                    placeholder="e.g. Warm & welcoming hosts"
+                    value={pair.weAre}
+                    contentLanguage={contentLanguage}
+                    onChange={(text) => updatePair(pair.id, 'weAre', text)}
+                  />
+
+                  <LocalizedInput
+                    label="We Are NOT *"
+                    placeholder="e.g. Elitist coffee snobs"
+                    value={pair.weAreNot}
+                    contentLanguage={contentLanguage}
+                    onChange={(text) => updatePair(pair.id, 'weAreNot', text)}
+                  />
+                </div>
+
+                <LocalizedTextarea
+                  label="Strategic Rationale"
+                  placeholder="Why is this distinction crucial for keeping the brand authentic?"
+                  rows={2}
+                  value={pair.rationale}
+                  contentLanguage={contentLanguage}
+                  onChange={(text) => updatePair(pair.id, 'rationale', text)}
+                />
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

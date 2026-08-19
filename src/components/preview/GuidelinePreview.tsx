@@ -1,6 +1,6 @@
 import React from 'react';
 import { Brand, ModuleId, Language, getLocalizedText } from '../../types/brand';
-import { Edit2, CheckCircle2, Image } from 'lucide-react';
+import { Edit2, CheckCircle2 } from 'lucide-react';
 import '../../styles/preview.css';
 
 interface GuidelinePreviewProps {
@@ -180,8 +180,14 @@ export const GuidelinePreview: React.FC<GuidelinePreviewProps> = ({
               </h3>
               <ul style={{ paddingLeft: '20px', lineHeight: '1.8', color: '#334155' }}>
                 {brand.modules.strategy.priorities.map((item, idx) => {
-                  const res = getText(item);
-                  return <li key={idx}>{res.text}</li>;
+                  const titleRes = typeof item === 'object' && 'title' in item ? getText((item as any).title) : getText(item as any);
+                  const descRes = typeof item === 'object' && 'description' in item ? getText((item as any).description) : null;
+                  return (
+                    <li key={idx}>
+                      <strong>{titleRes.text}</strong>
+                      {descRes?.text && <span style={{ color: '#64748b' }}> — {descRes.text}</span>}
+                    </li>
+                  );
                 })}
               </ul>
             </div>
@@ -215,6 +221,28 @@ export const GuidelinePreview: React.FC<GuidelinePreviewProps> = ({
 
           <div className="doc-grid-2">
             {(() => {
+              const audiences = brand.modules.positioning.targetAudiences;
+              if (audiences && audiences.length > 0) {
+                return (
+                  <div>
+                    <h4 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '8px' }}>
+                      Target Audiences ({audiences.length})
+                    </h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {audiences.map((aud) => {
+                        const nameRes = getText(aud.name);
+                        const descRes = getText(aud.description);
+                        return (
+                          <div key={aud.id} style={{ backgroundColor: '#f8fafc', padding: '8px 12px', borderRadius: 'var(--radius-sm)' }}>
+                            <div style={{ fontWeight: 600, fontSize: '0.92rem' }}>{nameRes.text}</div>
+                            {descRes.text && <div style={{ fontSize: '0.84rem', color: '#64748b', marginTop: '2px' }}>{descRes.text}</div>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              }
               const aud = getText(brand.modules.positioning.targetAudience);
               return aud.text ? (
                 <div>
@@ -245,11 +273,15 @@ export const GuidelinePreview: React.FC<GuidelinePreviewProps> = ({
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {brand.modules.positioning.differentiators.map((diff, idx) => {
-                  const res = getText(diff);
+                  const res = typeof diff === 'object' && 'title' in diff ? getText((diff as any).title) : getText(diff as any);
+                  const evidenceRes = typeof diff === 'object' && 'evidence' in diff ? getText((diff as any).evidence) : null;
                   return (
                     <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', backgroundColor: '#f8fafc', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
                       <CheckCircle2 size={16} color="var(--accent-teal)" style={{ marginTop: '3px', flexShrink: 0 }} />
-                      <span style={{ fontSize: '0.95rem', color: '#1e293b' }}>{res.text}</span>
+                      <div>
+                        <div style={{ fontSize: '0.95rem', color: '#1e293b', fontWeight: 500 }}>{res.text}</div>
+                        {evidenceRes?.text && <div style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '2px' }}>Evidence: {evidenceRes.text}</div>}
+                      </div>
                     </div>
                   );
                 })}
@@ -278,7 +310,7 @@ export const GuidelinePreview: React.FC<GuidelinePreviewProps> = ({
               </h4>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                 {brand.modules.personality.traits.map((tItem, idx) => {
-                  const res = getText(tItem);
+                  const res = typeof tItem === 'object' && 'trait' in tItem ? getText((tItem as any).trait) : getText(tItem as any);
                   return (
                     <span key={idx} style={{ padding: '6px 16px', borderRadius: 'var(--radius-full)', backgroundColor: '#0f172a', color: '#ffffff', fontSize: '0.88rem', fontWeight: 600 }}>
                       {res.text}
@@ -382,7 +414,7 @@ export const GuidelinePreview: React.FC<GuidelinePreviewProps> = ({
               </h4>
               <ul style={{ paddingLeft: '20px', lineHeight: 1.8, color: '#1e293b' }}>
                 {brand.modules.voiceTone.principles.map((p, idx) => {
-                  const res = getText(p);
+                  const res = typeof p === 'object' && 'title' in p ? getText((p as any).title) : getText(p as any);
                   return <li key={idx} style={{ fontWeight: 500 }}>{res.text}</li>;
                 })}
               </ul>
@@ -448,54 +480,22 @@ export const GuidelinePreview: React.FC<GuidelinePreviewProps> = ({
               <h4 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '16px' }}>
                 Logo Variant Placeholders
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+              <div className="doc-logo-variants-grid">
                 {brand.modules.visualBasics.logoVariants.map((variant) => {
                   const nameRes = getText(variant.name);
                   const usageRes = getText(variant.usageNotes);
-                  const doNotUseRes = getText(variant.doNotUseWhen);
-                  const isDarkBg = variant.recommendedBg?.toLowerCase() === '#2d241e' || variant.recommendedBg?.toLowerCase() === '#0f172a';
-
                   return (
-                    <div
-                      key={variant.id}
-                      style={{
-                        border: '1px solid var(--border-light)',
-                        borderRadius: 'var(--radius-md)',
-                        overflow: 'hidden',
-                        backgroundColor: '#ffffff'
-                      }}
-                    >
+                    <div key={variant.id} className="doc-logo-variant-card">
                       <div
-                        style={{
-                          height: '100px',
-                          backgroundColor: variant.recommendedBg || '#f8fafc',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexDirection: 'column',
-                          borderBottom: '1px solid var(--border-light)',
-                          padding: '12px'
-                        }}
+                        className="doc-logo-stage"
+                        style={{ backgroundColor: variant.recommendedBg || '#ffffff' }}
                       >
-                        <Image size={24} color={isDarkBg ? '#94a3b8' : '#64748b'} style={{ marginBottom: '4px' }} />
-                        <span style={{ fontSize: '0.82rem', fontWeight: 700, color: isDarkBg ? '#ffffff' : '#0f172a' }}>
-                          {nameRes.text}
-                        </span>
-                        <span style={{ fontSize: '0.7rem', color: isDarkBg ? '#94a3b8' : '#64748b' }}>
-                          Recommended BG: {variant.recommendedBg || 'Default'}
-                        </span>
+                        <div className="doc-logo-placeholder-text">{nameRes.text}</div>
                       </div>
-                      <div style={{ padding: '14px' }}>
-                        {usageRes.text && (
-                          <p style={{ fontSize: '0.84rem', color: '#334155', lineHeight: 1.5, marginBottom: '8px' }}>
-                            <strong>Usage:</strong> {usageRes.text}
-                          </p>
-                        )}
-                        {doNotUseRes.text && (
-                          <p style={{ fontSize: '0.78rem', color: '#991b1b', backgroundColor: '#fef2f2', padding: '6px 8px', borderRadius: '4px' }}>
-                            ✕ <strong>Avoid:</strong> {doNotUseRes.text}
-                          </p>
-                        )}
+                      <div className="doc-logo-meta">
+                        <div className="doc-logo-name">{nameRes.text}</div>
+                        <div className="doc-logo-badge">{variant.variantKey}</div>
+                        {usageRes.text && <div className="doc-logo-usage">{usageRes.text}</div>}
                       </div>
                     </div>
                   );
@@ -572,8 +572,14 @@ export const GuidelinePreview: React.FC<GuidelinePreviewProps> = ({
               </h4>
               <ul style={{ paddingLeft: '20px', lineHeight: 1.8, color: '#1e293b' }}>
                 {brand.modules.messaging.keyMessages.map((msg, idx) => {
-                  const res = getText(msg);
-                  return <li key={idx} style={{ fontWeight: 500 }}>{res.text}</li>;
+                  const res = typeof msg === 'object' && 'headline' in msg ? getText((msg as any).headline) : getText(msg as any);
+                  const narRes = typeof msg === 'object' && 'narrative' in msg ? getText((msg as any).narrative) : null;
+                  return (
+                    <li key={idx} style={{ fontWeight: 500 }}>
+                      {res.text}
+                      {narRes?.text && <div style={{ fontSize: '0.86rem', color: '#64748b', fontWeight: 400 }}>{narRes.text}</div>}
+                    </li>
+                  );
                 })}
               </ul>
             </div>

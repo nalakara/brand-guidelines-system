@@ -1,5 +1,6 @@
 import { Brand } from '../types/brand';
 import { sampleBrand } from '../data/sampleBrand';
+import { normalizeBrandData } from '../utils/migration';
 import { ALL_MODULE_IDS, MODULE_REGISTRY } from '../modules/registry';
 
 const STORAGE_KEY = 'brand_guidelines_system_brands_v3';
@@ -10,21 +11,21 @@ export function loadBrands(): Brand[] {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
       // Seed initial sample brand
-      const initial = [sampleBrand];
+      const initial = [normalizeBrandData(sampleBrand)];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
       return initial;
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
+      return parsed.map((b) => normalizeBrandData(b));
     }
     // Fallback if empty array
-    const initial = [sampleBrand];
+    const initial = [normalizeBrandData(sampleBrand)];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
     return initial;
   } catch (err) {
     console.error('Failed to load brands from localStorage', err);
-    return [sampleBrand];
+    return [normalizeBrandData(sampleBrand)];
   }
 }
 

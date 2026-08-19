@@ -178,7 +178,7 @@ export const MODULE_REGISTRY: Record<ModuleId, ModuleDefinition> = {
     shortDescription: 'Target audience, differentiators, and core positioning statement.',
     iconName: 'Target',
     defaultData: (): PositioningModule => ({
-      targetAudience: { en: '', id: '' },
+      targetAudiences: [],
       marketCategory: { en: '', id: '' },
       coreProblem: { en: '', id: '' },
       differentiators: [],
@@ -187,12 +187,12 @@ export const MODULE_REGISTRY: Record<ModuleId, ModuleDefinition> = {
     }),
     calculateCompletion: (data?: PositioningModule): CompletionStatus => {
       if (!data) return 'empty';
-      const hasAudience = Boolean(getLocalizedText(data.targetAudience, 'en').text);
+      const audCount = data.targetAudiences?.filter((a) => getLocalizedText(a.name, 'en').text).length || 0;
       const hasStatement = Boolean(getLocalizedText(data.positioningStatement, 'en').text);
-      const diffsCount = data.differentiators?.filter(d => getLocalizedText(d, 'en').text).length || 0;
+      const diffsCount = data.differentiators?.filter((d) => getLocalizedText(d.title, 'en').text).length || 0;
       
-      if (!hasAudience && !hasStatement && diffsCount === 0) return 'empty';
-      if (hasAudience && (hasStatement || diffsCount >= 2)) return 'complete';
+      if (audCount === 0 && !hasStatement && diffsCount === 0) return 'empty';
+      if (audCount >= 1 && (hasStatement || diffsCount >= 2)) return 'complete';
       return 'started';
     }
   },
@@ -214,8 +214,8 @@ export const MODULE_REGISTRY: Record<ModuleId, ModuleDefinition> = {
     }),
     calculateCompletion: (data?: PersonalityModule): CompletionStatus => {
       if (!data) return 'empty';
-      const traitsCount = data.traits?.filter(t => getLocalizedText(t, 'en').text).length || 0;
-      const pairsCount = data.weAreWeAreNot?.filter(p => getLocalizedText(p.weAre, 'en').text).length || 0;
+      const traitsCount = data.traits?.filter((t) => getLocalizedText(t.trait, 'en').text).length || 0;
+      const pairsCount = data.weAreWeAreNot?.filter((p) => getLocalizedText(p.weAre, 'en').text).length || 0;
       const hasArchetype = Boolean(getLocalizedText(data.archetype, 'en').text);
       
       if (traitsCount === 0 && pairsCount === 0 && !hasArchetype) return 'empty';
@@ -231,16 +231,15 @@ export const MODULE_REGISTRY: Record<ModuleId, ModuleDefinition> = {
     defaultData: (): VoiceToneModule => ({
       principles: [],
       toneGuidelines: { en: '', id: '' },
-      wordsToUse: [],
-      wordsToAvoid: [],
+      vocabulary: [],
       examples: [],
       channelNotes: []
     }),
     calculateCompletion: (data?: VoiceToneModule): CompletionStatus => {
       if (!data) return 'empty';
       const hasTone = Boolean(getLocalizedText(data.toneGuidelines, 'en').text);
-      const principlesCount = data.principles?.filter(p => getLocalizedText(p, 'en').text).length || 0;
-      const examplesCount = data.examples?.filter(e => getLocalizedText(e.before, 'en').text).length || 0;
+      const principlesCount = data.principles?.filter((p) => getLocalizedText(p.title, 'en').text).length || 0;
+      const examplesCount = data.examples?.filter((e) => getLocalizedText(e.before, 'en').text).length || 0;
       
       if (!hasTone && principlesCount === 0 && examplesCount === 0) return 'empty';
       if (hasTone && (principlesCount >= 2 || examplesCount >= 1)) return 'complete';
@@ -263,7 +262,7 @@ export const MODULE_REGISTRY: Record<ModuleId, ModuleDefinition> = {
       if (!data) return 'empty';
       const hasTagline = Boolean(getLocalizedText(data.tagline, 'en').text);
       const hasPitch = Boolean(getLocalizedText(data.elevatorPitch, 'en').text);
-      const keyMsgsCount = data.keyMessages?.filter(m => getLocalizedText(m, 'en').text).length || 0;
+      const keyMsgsCount = data.keyMessages?.filter((m) => getLocalizedText(m.headline, 'en').text).length || 0;
       
       if (!hasTagline && !hasPitch && keyMsgsCount === 0) return 'empty';
       if ((hasTagline || hasPitch) && keyMsgsCount >= 2) return 'complete';

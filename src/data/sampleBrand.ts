@@ -181,7 +181,8 @@ export const sampleBrand: Brand = {
           description: {
             en: 'We slow down to do things right—from bean sourcing to manual pour-over precision.',
             id: 'Kami mengambil waktu untuk melakukan segala hal secara presisi—dari pemilihan biji hingga teknik seduh manual.'
-          }
+          },
+          tags: ['craft', 'precision']
         },
         {
           id: 'val-2',
@@ -192,7 +193,8 @@ export const sampleBrand: Brand = {
           description: {
             en: 'Unpretentious, welcoming service that makes regulars and newcomers feel equally at home.',
             id: 'Pelayanan ramah tanpa kesan elitis yang membuat pelanggan setia maupun pengunjung baru merasa nyaman.'
-          }
+          },
+          tags: ['service', 'welcoming']
         },
         {
           id: 'val-3',
@@ -203,25 +205,70 @@ export const sampleBrand: Brand = {
           description: {
             en: 'Direct trade relationships with smallholder farms, sharing exact pricing and farm origin.',
             id: 'Kemitraan perdagangan langsung dengan petani kecil, membagikan harga transparan dan asal usul perkebunan.'
-          }
+          },
+          tags: ['ethics', 'sourcing']
         }
       ],
       priorities: [
         {
-          en: 'Deepen direct-trade producer partnerships in Guatemala and Ethiopia',
-          id: 'Memperdalam kemitraan perdagangan langsung dengan petani kopi di Guatemala dan Ethiopia'
+          id: 'pri-1',
+          title: {
+            en: 'Deepen direct-trade producer partnerships in Guatemala and Ethiopia',
+            id: 'Memperdalam kemitraan perdagangan langsung dengan petani kopi di Guatemala dan Ethiopia'
+          },
+          description: {
+            en: 'Visit partner farms annually and commit to 3-year minimum forward purchase contracts.',
+            id: 'Mengunjungi kebun mitra setiap tahun dan menyepakati kontrak pembelian minimal 3 tahun.'
+          },
+          timeframe: 'Near-term'
         },
         {
-          en: 'Maintain zero-waste packaging across all retail and bean bags',
-          id: 'Mempertahankan kemasan ramah lingkungan tanpa sampah plastik pada seluruh biji kopi eceran'
+          id: 'pri-2',
+          title: {
+            en: 'Maintain zero-waste packaging across all retail and bean bags',
+            id: 'Mempertahankan kemasan ramah lingkungan tanpa sampah plastik pada seluruh biji kopi eceran'
+          },
+          description: {
+            en: 'Transition all wholesale tins and home pouches to certified home-compostable barrier films.',
+            id: 'Beralih ke bahan kemasan kompos rumahan bersertifikat untuk seluruh produk.'
+          },
+          timeframe: 'Mid-term'
         }
       ]
     },
     positioning: {
-      targetAudience: {
-        en: 'Urban professionals, creative freelancers, and local residents who feel overwhelmed by loud commercial coffee chains and seek a calm, high-craft morning sanctuary.',
-        id: 'Profesional perkotaan, pekerja kreatif, dan warga lokal yang merasa jenuh dengan kedai kopi komersial yang bising dan mencari tempat tenang berkualitas tinggi.'
-      },
+      targetAudiences: [
+        {
+          id: 'aud-1',
+          name: {
+            en: 'Urban Professionals & Creative Freelancers',
+            id: 'Profesional Perkotaan & Pekerja Kreatif'
+          },
+          description: {
+            en: 'Knowledge workers and creators seeking a calm, high-craft morning sanctuary to begin their day.',
+            id: 'Pekerja kreatif yang mencari tempat tenang berkualitas tinggi untuk memulai rutinitas pagi.'
+          },
+          needsPainPoints: {
+            en: 'Overwhelmed by loud, rushed commercial coffee chains; want unhurried hospitality and inspiring space.',
+            id: 'Jenuh dengan kedai cepat saji yang bising; mendambakan pelayanan santai dan ruang yang menenangkan.'
+          }
+        },
+        {
+          id: 'aud-2',
+          name: {
+            en: 'Neighborhood Residents & Ritual Seekers',
+            id: 'Warga Lingkungan & Pecinta Ritual Kopi'
+          },
+          description: {
+            en: 'Locals who value connection with their neighborhood barista and take pride in artisanal origin beans.',
+            id: 'Warga lokal yang menyukai hubungan dekat dengan barista dan menghargai biji kopi berkualitas kriya.'
+          },
+          needsPainPoints: {
+            en: 'Want consistent quality without specialty coffee intimidation or pretension.',
+            id: 'Menginginkan rasa konsisten tanpa istilah kopi yang rumit dan mengintimidasi.'
+          }
+        }
+      ],
       marketCategory: {
         en: 'Artisanal Specialty Coffee & Neighborhood Cafes',
         id: 'Kopi Spesialti Artisanal & Kafe Lingkungan'
@@ -232,16 +279,45 @@ export const sampleBrand: Brand = {
       },
       differentiators: [
         {
-          en: 'Acoustically dampened, screen-lightened cafe spaces designed for presence',
-          id: 'Ruang kafe yang dirancang khusus dengan peredam suara dan pencahayaan lembut untuk ketenangan'
+          id: 'diff-1',
+          title: {
+            en: 'Acoustically dampened, screen-lightened cafe spaces designed for presence',
+            id: 'Ruang kafe yang dirancang khusus dengan peredam suara dan pencahayaan lembut untuk ketenangan'
+          },
+          description: {
+            en: 'Natural oak wood interiors, acoustic felt panels, and subtle natural lighting create a sensory refuge.',
+            id: 'Interior kayu ek alami dan panel akustik menciptakan suaka sensorik yang tenang.'
+          },
+          evidence: {
+            en: 'Independent acoustic testing measuring average background sound at < 62 dB.',
+            id: 'Pengukuran suara akustik independen di bawah 62 dB.'
+          }
         },
         {
-          en: 'Transparent direct-trade pricing printed on every bag of single-origin coffee',
-          id: 'Harga transparan perdagangan langsung tercetak jelas pada setiap kantong biji kopi'
+          id: 'diff-2',
+          title: {
+            en: 'Transparent direct-trade pricing printed on every bag of single-origin coffee',
+            id: 'Harga transparan perdagangan langsung tercetak jelas pada setiap kantong biji kopi'
+          },
+          description: {
+            en: 'We publish farm gate prices and FOB margins directly on the retail label.',
+            id: 'Kami mencetak margin FOB dan harga petani langsung pada label produk.'
+          },
+          evidence: {
+            en: 'Annual open-source Transparency Report published online.',
+            id: 'Laporan Transparansi tahunan yang dipublikasikan terbuka.'
+          }
         },
         {
-          en: 'Baristas trained as warm hosts rather than gatekeepers of coffee jargon',
-          id: 'Barista yang dilatih sebagai tuan rumah yang ramah, bukan penguji istilah kopi'
+          id: 'diff-3',
+          title: {
+            en: 'Baristas trained as warm hosts rather than gatekeepers of coffee jargon',
+            id: 'Barista yang dilatih sebagai tuan rumah yang ramah, bukan penguji istilah kopi'
+          },
+          description: {
+            en: 'Hospitality-first training curriculum prioritizing customer comfort over technical posturing.',
+            id: 'Kurikulum pelatihan yang mengutamakan keramahan dibandingkan istilah teknis.'
+          }
         }
       ],
       competitiveAlternatives: {
@@ -255,10 +331,42 @@ export const sampleBrand: Brand = {
     },
     personality: {
       traits: [
-        { en: 'Warm', id: 'Hangat' },
-        { en: 'Grounded', id: 'Membumi' },
-        { en: 'Thoughtful', id: 'Penuh Pertimbangan' },
-        { en: 'Quietly Confident', id: 'Percaya Diri yang Hening' }
+        {
+          id: 'trait-1',
+          trait: { en: 'Warm', id: 'Hangat' },
+          definition: {
+            en: 'Approachable, welcoming, and genuinely interested in human comfort.',
+            id: 'Ramah, mudah didekati, dan peduli pada kenyamanan orang lain.'
+          },
+          spectrumPosition: 75
+        },
+        {
+          id: 'trait-2',
+          trait: { en: 'Grounded', id: 'Membumi' },
+          definition: {
+            en: 'Unpretentious, honest, and anchored in simple, well-crafted rituals.',
+            id: 'Tidak berlebihan, jujur, dan berakar pada ritual sederhana yang penuh kriya.'
+          },
+          spectrumPosition: 80
+        },
+        {
+          id: 'trait-3',
+          trait: { en: 'Thoughtful', id: 'Penuh Pertimbangan' },
+          definition: {
+            en: 'Intentional in every detail—from acoustics to cup ceramic weight.',
+            id: 'Penuh perhatian pada setiap detail—dari akustik hingga bobot cangkir keramik.'
+          },
+          spectrumPosition: 85
+        },
+        {
+          id: 'trait-4',
+          trait: { en: 'Quietly Confident', id: 'Percaya Diri yang Hening' },
+          definition: {
+            en: 'Does not need to shout or use flashy gimmicks to stand out.',
+            id: 'Tidak perlu berteriak atau menggunakan trik mencolok untuk tampil istimewa.'
+          },
+          spectrumPosition: 70
+        }
       ],
       sliders: {
         classicToModern: 42,
@@ -274,40 +382,68 @@ export const sampleBrand: Brand = {
         {
           id: 'pair-1',
           weAre: { en: 'Warm & welcoming hosts', id: 'Tuan rumah yang hangat' },
-          weAreNot: { en: 'Elitist coffee snobs', id: 'Pakar kopi yang elitis' }
+          weAreNot: { en: 'Elitist coffee snobs', id: 'Pakar kopi yang elitis' },
+          rationale: {
+            en: 'Coffee is an invitation to pause, not an examination of tasting notes.',
+            id: 'Kopi adalah ajakan untuk beristirahat, bukan ujian mencicipi rasa.'
+          }
         },
         {
           id: 'pair-2',
           weAre: { en: 'Intentionally calm', id: 'Tenang dengan penuh kesadaran' },
-          weAreNot: { en: 'Boring or clinical', id: 'Membosankan atau kaku' }
+          weAreNot: { en: 'Boring or clinical', id: 'Membosankan atau kaku' },
+          rationale: {
+            en: 'Serenity comes from beauty and craftsmanship, not sterile emptiness.',
+            id: 'Ketenangan lahir dari keindahan kriya, bukan kekosongan yang hampa.'
+          }
         }
       ]
     },
     voiceTone: {
       principles: [
         {
-          en: 'Speak like a thoughtful friend, not a corporation',
-          id: 'Bicara seperti teman yang hangat, bukan korporasi'
+          id: 'vp-1',
+          title: {
+            en: 'Speak like a thoughtful friend, not a corporation',
+            id: 'Bicara seperti teman yang hangat, bukan korporasi'
+          },
+          description: {
+            en: 'Use relaxed cadence, gentle humor, and sincere observation.',
+            id: 'Gunakan irama santai, kehangatan, dan ketulusan berbahasa.'
+          },
+          doExample: {
+            en: 'Take your time. We just roasted a fresh batch of Ethiopian heirloom beans.',
+            id: 'Nikmati waktu Anda. Biji kopi Ethiopia kami baru saja selesai disangrai segar.'
+          },
+          dontExample: {
+            en: 'Maximize your throughput with our premium artisan coffee beverage solutions!',
+            id: 'Tingkatkan produktivitas Anda dengan solusi minuman kopi premium kami!'
+          }
         },
         {
-          en: 'Keep prose clear, human, and lightly poetic',
-          id: 'Gunakan kalimat yang jelas, manusiawi, dan puitis secara halus'
+          id: 'vp-2',
+          title: {
+            en: 'Keep prose clear, human, and lightly poetic',
+            id: 'Gunakan kalimat yang jelas, manusiawi, dan puitis secara halus'
+          },
+          description: {
+            en: 'Celebrate everyday beauty without sliding into pretension or overly dense metaphors.',
+            id: 'Rayakan keindahan rutinitas harian tanpa terasa kaku atau berbelit-belit.'
+          }
         }
       ],
       toneGuidelines: {
         en: 'Warm, conversational, unhurried, and grounded. We use natural rhythms, avoiding hyperbole, exclamation overload, or trendy internet slang.',
         id: 'Hangat, santai, tidak terburu-buru, dan membumi. Gunakan ritme alami tanpa kata berlebihan atau bahasa gaul berlebihan.'
       },
-      wordsToUse: [
-        { en: 'Grounding', id: 'Penyeimbang' },
-        { en: 'Ritual', id: 'Ritual' },
-        { en: 'Pause', id: 'Jeda' },
-        { en: 'Crafted', id: 'Dibuat dengan kriya' }
-      ],
-      wordsToAvoid: [
-        { en: 'Fuel up', id: 'Cari kafein' },
-        { en: 'Disruptive', id: 'Disruptif' },
-        { en: 'Premium', id: 'Mewah / Premium' }
+      vocabulary: [
+        { id: 'voc-1', term: { en: 'Grounding', id: 'Penyeimbang' }, recommendation: 'prefer' },
+        { id: 'voc-2', term: { en: 'Ritual', id: 'Ritual' }, recommendation: 'prefer' },
+        { id: 'voc-3', term: { en: 'Pause', id: 'Jeda' }, recommendation: 'prefer' },
+        { id: 'voc-4', term: { en: 'Crafted', id: 'Dibuat dengan kriya' }, recommendation: 'prefer' },
+        { id: 'voc-5', term: { en: 'Fuel up', id: 'Cari kafein' }, recommendation: 'avoid' },
+        { id: 'voc-6', term: { en: 'Disruptive', id: 'Disruptif' }, recommendation: 'avoid' },
+        { id: 'voc-7', term: { en: 'Premium', id: 'Mewah / Premium' }, recommendation: 'avoid' }
       ],
       examples: [
         {
@@ -320,6 +456,10 @@ export const sampleBrand: Brand = {
           after: {
             en: 'Take a quiet moment. Your morning cup is freshly brewed inside.',
             id: 'Nikmati momen tenang. Kopi pagi Anda diseduh segar di dalam.'
+          },
+          explanation: {
+            en: 'Reframes coffee from a frantic transaction into a restorative daily ritual.',
+            id: 'Mengubah makna kopi dari transaksi terburu-buru menjadi ritual yang menenangkan.'
           }
         }
       ],
@@ -356,25 +496,18 @@ export const sampleBrand: Brand = {
           usage: { en: 'Accent highlights & badge borders', id: 'Aksen penyorot & bingkai lencana' }
         }
       ],
-      secondaryColors: [
-        {
-          id: 'c-4',
-          name: { en: 'Sage Leaf', id: 'Sage Leaf (Hijau Daun)' },
-          hex: '#526e5a',
-          usage: { en: 'Secondary tags for green tea blends', id: 'Tag sekunder untuk kemasan teh hijau' }
-        }
-      ],
+      secondaryColors: [],
       typographyNotes: {
-        en: 'Primary Serif: Newsreader (Editorial & Headings). Primary Sans: Inter (UI & Body Text). Monospace: JetBrains Mono.',
-        id: 'Serif Utama: Newsreader (Judul & Editorial). Sans Utama: Inter (Antarmuka & Teks Isi). Monospace: JetBrains Mono.'
+        en: 'Typography balances heritage craftsmanship with modern readability.',
+        id: 'Tipografi menyeimbangkan kriya warisan dengan keterbacaan modern.'
       },
       imageryDirection: {
-        en: 'Natural daylight, soft textures, tactile surfaces (warm oak, ceramic, linen), focused shots of pour-overs and relaxed human hands.',
-        id: 'Cahaya alami, tekstur lembut, permukaan alami (kayu ek, keramik, linen), serta foto fokus pada seduhan kopi dan tangan manusia.'
+        en: 'Natural daylight, documentary angles, authentic cafe textures, and unposed moments.',
+        id: 'Cahaya alami, sudut pandang dokumenter, tekstur kafe autentik, dan momen natural.'
       },
       layoutNotes: {
-        en: 'Uncluttered grids with generous whitespace. Asymmetrical balance with subtle tactile lines.',
-        id: 'Grid rapi dengan ruang kosong yang lapang. Keseimbangan asimetris dengan garis pembatas halus.'
+        en: 'Generous whitespace, structured grid, intentional focal points.',
+        id: 'Ruang kosong yang lapang, grid terstruktur, dan titik fokus yang jelas.'
       }
     },
     messaging: {
@@ -388,28 +521,78 @@ export const sampleBrand: Brand = {
       },
       keyMessages: [
         {
-          en: 'Every cup starts with direct-trade relationships that honor the farmer.',
-          id: 'Setiap cangkir dimulai dari hubungan perdagangan langsung yang menghargai petani.'
+          id: 'km-1',
+          headline: {
+            en: 'Every cup starts with direct-trade relationships that honor the farmer.',
+            id: 'Setiap cangkir dimulai dari hubungan perdagangan langsung yang menghargai petani.'
+          },
+          narrative: {
+            en: 'We pay above fair-trade minimums to smallholder farms in Huila and Yirgacheffe.',
+            id: 'Kami membayar harga di atas standar perdagangan adil kepada petani kecil.'
+          },
+          targetAudienceRef: {
+            domain: 'foundation',
+            entityType: 'targetAudience',
+            entityId: 'aud-1',
+            label: 'Urban Professionals & Creative Freelancers'
+          },
+          proofPointRefs: [
+            {
+              domain: 'foundation',
+              entityType: 'proofPoint',
+              entityId: 'pp-1',
+              label: '100% direct-trade sourcing with transparent farm prices printed on every bag'
+            }
+          ]
         },
         {
-          en: 'Our spaces are designed to quiet the noise, not speed you up.',
-          id: 'Ruang kami dirancang untuk menenangkan pikiran, bukan mempercepat langkah Anda.'
+          id: 'km-2',
+          headline: {
+            en: 'Our spaces are designed to quiet the noise, not speed you up.',
+            id: 'Ruang kami dirancang untuk menenangkan pikiran, bukan mempercepat langkah Anda.'
+          },
+          narrative: {
+            en: 'Acoustic dampening and warm oak seating make our cafes a sanctuary from sensory overload.',
+            id: 'Peredam akustik dan tempat duduk kayu ek membuat kafe kami menjadi suaka dari kebisingan kota.'
+          },
+          targetAudienceRef: {
+            domain: 'foundation',
+            entityType: 'targetAudience',
+            entityId: 'aud-1',
+            label: 'Urban Professionals & Creative Freelancers'
+          }
         }
       ],
       proofPoints: [
         {
-          en: '100% direct-trade sourcing with transparent farm prices printed on every bag',
-          id: '100% pengadaan perdagangan langsung dengan harga perkebunan transparan tercetak di setiap kemasan'
+          id: 'pp-1',
+          claim: {
+            en: '100% direct-trade sourcing with transparent farm prices printed on every bag',
+            id: '100% pengadaan perdagangan langsung dengan harga perkebunan transparan tercetak di setiap kemasan'
+          },
+          evidence: {
+            en: 'Farm-gate purchase receipts published annually in our Transparency Report.',
+            id: 'Kwitansi pembelian tingkat petani diterbitkan tahunan dalam Laporan Transparansi.'
+          },
+          category: 'Ethics'
         }
       ],
       callsToAction: [
         {
-          en: 'Find your neighborhood sanctuary',
-          id: 'Temukan kedai penenang di lingkungan Anda'
+          id: 'cta-1',
+          label: {
+            en: 'Find your neighborhood sanctuary',
+            id: 'Temukan kedai penenang di lingkungan Anda'
+          },
+          contextChannel: 'Website Hero'
         },
         {
-          en: 'Taste this season’s harvest',
-          id: 'Cicipi hasil panen musim ini'
+          id: 'cta-2',
+          label: {
+            en: 'Taste this season’s harvest',
+            id: 'Cicipi hasil panen musim ini'
+          },
+          contextChannel: 'Retail Menu'
         }
       ]
     }

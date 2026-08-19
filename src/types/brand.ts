@@ -53,23 +53,136 @@ export function updateLocalizedString(
   };
 }
 
-export interface ValueItem {
+export type EntityDomain =
+  | 'foundation'
+  | 'visualKnowledge'
+  | 'visualAssets'
+  | 'visualRules';
+
+export type EntityType =
+  // Foundation Entities
+  | 'strategyValue'
+  | 'strategicPriority'
+  | 'targetAudience'
+  | 'differentiator'
+  | 'personalityTrait'
+  | 'voicePrinciple'
+  | 'vocabularyTerm'
+  | 'writingExample'
+  | 'keyMessage'
+  | 'proofPoint'
+  | 'callToAction'
+  // Visual Knowledge Entities
+  | 'logo'
+  | 'color'
+  | 'font'
+  | 'typeStyle'
+  | 'imageryDirection'
+  | 'graphicLanguage'
+  | 'layoutPrinciple'
+  // Visual Assets & Rules
+  | 'asset'
+  | 'rule';
+
+export interface EntityReference {
+  domain: EntityDomain;
+  entityType: EntityType;
+  entityId: string;
+  label?: string; // Human label cached for quick render
+}
+
+// --- Foundation Entities ---
+
+export interface StrategicValueEntity {
   id: string;
   title: LocalizedString;
   description: LocalizedString;
+  tags?: string[];
 }
 
-export interface WeArePair {
+export type ValueItem = StrategicValueEntity; // Alias for backward compatibility
+
+export interface StrategicPriorityEntity {
+  id: string;
+  title: LocalizedString;
+  description?: LocalizedString;
+  timeframe?: string; // e.g. 'Near-term', 'Long-term'
+}
+
+export interface AudienceEntity {
+  id: string;
+  name: LocalizedString;
+  description?: LocalizedString;
+  needsPainPoints?: LocalizedString;
+}
+
+export interface DifferentiatorEntity {
+  id: string;
+  title: LocalizedString;
+  description?: LocalizedString;
+  evidence?: LocalizedString;
+}
+
+export interface PersonalityTraitEntity {
+  id: string;
+  trait: LocalizedString;
+  definition?: LocalizedString;
+  spectrumPosition?: number; // 0-100
+}
+
+export interface WeArePairEntity {
   id: string;
   weAre: LocalizedString;
   weAreNot: LocalizedString;
+  rationale?: LocalizedString;
 }
 
-export interface WritingExample {
+export type WeArePair = WeArePairEntity; // Alias for backward compatibility
+
+export interface VoicePrincipleEntity {
+  id: string;
+  title: LocalizedString;
+  description?: LocalizedString;
+  doExample?: LocalizedString;
+  dontExample?: LocalizedString;
+}
+
+export interface VocabularyEntity {
+  id: string;
+  term: LocalizedString;
+  recommendation: 'prefer' | 'avoid';
+  context?: LocalizedString;
+}
+
+export interface WritingExampleEntity {
   id: string;
   context?: LocalizedString;
   before: LocalizedString;
   after: LocalizedString;
+  explanation?: LocalizedString;
+}
+
+export type WritingExample = WritingExampleEntity; // Alias for backward compatibility
+
+export interface KeyMessageEntity {
+  id: string;
+  headline: LocalizedString;
+  narrative?: LocalizedString;
+  targetAudienceRef?: EntityReference;
+  proofPointRefs?: EntityReference[];
+}
+
+export interface ProofPointEntity {
+  id: string;
+  claim: LocalizedString;
+  evidence?: LocalizedString;
+  category?: string;
+}
+
+export interface CTAEntity {
+  id: string;
+  label: LocalizedString;
+  contextChannel?: string;
 }
 
 export interface ColorSwatch {
@@ -267,12 +380,7 @@ export type RuleContextCategory =
   | 'layout'
   | 'general';
 
-export interface RuleEntityReference {
-  type: 'knowledge' | 'asset';
-  moduleId: string; // e.g. 'logoSystem', 'colorSystem', 'visualAssets'
-  entityId: string;
-  label: string; // e.g. 'Primary Logo' or 'Inter-Bold.woff2'
-}
+export type RuleEntityReference = EntityReference;
 
 export interface VisualRuleItem {
   id: string;
@@ -369,21 +477,22 @@ export interface BrandStrategyModule {
   purpose: LocalizedString;
   mission: LocalizedString;
   vision: LocalizedString;
-  values: ValueItem[];
-  priorities: LocalizedString[];
+  values: StrategicValueEntity[];
+  priorities: StrategicPriorityEntity[];
 }
 
 export interface PositioningModule {
-  targetAudience: LocalizedString;
+  targetAudiences: AudienceEntity[];
+  targetAudience?: LocalizedString; // Legacy compatibility
   marketCategory: LocalizedString;
   coreProblem: LocalizedString;
-  differentiators: LocalizedString[];
+  differentiators: DifferentiatorEntity[];
   competitiveAlternatives: LocalizedString;
   positioningStatement: LocalizedString;
 }
 
 export interface PersonalityModule {
-  traits: LocalizedString[];
+  traits: PersonalityTraitEntity[];
   sliders: {
     classicToModern: number; // 0 to 100 (Shared)
     seriousToPlayful: number; // 0 to 100 (Shared)
@@ -391,15 +500,16 @@ export interface PersonalityModule {
     practicalToVisionary: number; // 0 to 100 (Shared)
   };
   archetype: LocalizedString;
-  weAreWeAreNot: WeArePair[];
+  weAreWeAreNot: WeArePairEntity[];
 }
 
 export interface VoiceToneModule {
-  principles: LocalizedString[];
+  principles: VoicePrincipleEntity[];
   toneGuidelines: LocalizedString;
-  wordsToUse: LocalizedString[];
-  wordsToAvoid: LocalizedString[];
-  examples: WritingExample[];
+  vocabulary: VocabularyEntity[];
+  wordsToUse?: LocalizedString[]; // Legacy compatibility
+  wordsToAvoid?: LocalizedString[]; // Legacy compatibility
+  examples: WritingExampleEntity[];
   channelNotes: LocalizedString[];
 }
 
@@ -423,9 +533,9 @@ export interface VisualBasicsModule {
 export interface MessagingModule {
   tagline: LocalizedString;
   elevatorPitch: LocalizedString;
-  keyMessages: LocalizedString[];
-  proofPoints: LocalizedString[];
-  callsToAction: LocalizedString[];
+  keyMessages: KeyMessageEntity[];
+  proofPoints: ProofPointEntity[];
+  callsToAction: CTAEntity[];
 }
 
 export interface BrandModulesData {

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import {
+  Brand,
   Language,
   VisualRuleItem,
   RuleType,
   RuleContextCategory,
-  RuleEntityReference,
+  EntityReference,
   getLocalizedText
 } from '../../types/brand';
 import { LocalizedTextarea } from '../ui/LocalizedInput';
+import { ReferencePicker } from '../ui/ReferencePicker';
+import { resolveEntityLabel } from '../../utils/entityResolver';
 import { t } from '../../i18n/translations';
 import {
   Plus,
@@ -19,11 +22,13 @@ import {
   ShieldAlert,
   ChevronRight,
   Link,
-  BookOpen
+  BookOpen,
+  X
 } from 'lucide-react';
 
 interface VisualRulesEditorProps {
   data?: VisualRuleItem[];
+  brand: Brand;
   uiLanguage: Language;
   contentLanguage: Language;
   onChange: (updatedRules: VisualRuleItem[]) => void;
@@ -48,6 +53,7 @@ const RULE_TYPES: { type: RuleType; labelKey: string; color: string; icon: any }
 
 export const VisualRulesEditor: React.FC<VisualRulesEditorProps> = ({
   data = [],
+  brand,
   uiLanguage,
   contentLanguage,
   onChange
@@ -60,6 +66,7 @@ export const VisualRulesEditor: React.FC<VisualRulesEditorProps> = ({
 
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showPickerModal, setShowPickerModal] = useState(false);
 
   // Form States for Rule Add / Edit
   const [ruleName, setRuleName] = useState('');
@@ -67,11 +74,7 @@ export const VisualRulesEditor: React.FC<VisualRulesEditorProps> = ({
   const [ruleContext, setRuleContext] = useState<RuleContextCategory>('logo');
   const [ruleGuidance, setRuleGuidance] = useState<any>(undefined);
   const [ruleTagsInput, setRuleTagsInput] = useState('');
-  const [selectedReferences, setSelectedReferences] = useState<RuleEntityReference[]>([]);
-
-  // Reference picker states
-  const [newRefType, setNewRefType] = useState<'knowledge' | 'asset'>('knowledge');
-  const [newRefLabel, setNewRefLabel] = useState('');
+  const [selectedReferences, setSelectedReferences] = useState<EntityReference[]>([]);
 
   const handleCreateRule = (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,16 +116,14 @@ export const VisualRulesEditor: React.FC<VisualRulesEditorProps> = ({
     }
   };
 
-  const handleAddReference = () => {
-    if (!newRefLabel.trim()) return;
-    const refObj: RuleEntityReference = {
-      type: newRefType,
-      moduleId: newRefType === 'knowledge' ? ruleContext : 'visualAssets',
-      entityId: 'ref-' + Date.now(),
-      label: newRefLabel.trim()
-    };
-    setSelectedReferences([...selectedReferences, refObj]);
-    setNewRefLabel('');
+  const handleSelectReference = (ref: EntityReference) => {
+    if (!selectedReferences.some((r) => r.entityId === ref.entityId && r.entityType === ref.entityType)) {
+      setSelectedReferences([...selectedReferences, ref]);
+    }
+  };
+
+  const handleRemoveReference = (entityId: string) => {
+    setSelectedReferences(selectedReferences.filter((r) => r.entityId !== entityId));
   };
 
   const selectedRule = rulesList.find((r) => r.id === selectedRuleId);
@@ -346,37 +347,45 @@ export const VisualRulesEditor: React.FC<VisualRulesEditorProps> = ({
 
             {/* Reference Attachment Sub-Section */}
             <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
-              <label className="form-label" style={{ fontWeight: 600 }}>Attach References (Optional)</label>
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
-                <select
-                  className="form-control"
-                  style={{ width: '130px' }}
-                  value={newRefType}
-                  onChange={(e) => setNewRefType(e.target.value as any)}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <label className="form-label" style={{ fontWeight: 600, marginBottom: 0 }}>
+                  {t('attachedReferences', uiLanguage)} ({selectedReferences.length})
+                </label>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => setShowPickerModal(true)}
+                  style={{ fontSize: '0.78rem' }}
                 >
-                  <option value="knowledge">Knowledge</option>
-                  <option value="asset">Asset</option>
-                </select>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="e.g. Primary Logo or Inter-Bold.woff2"
-                  value={newRefLabel}
-                  onChange={(e) => setNewRefLabel(e.target.value)}
-                />
-                <button type="button" className="btn btn-secondary btn-sm" onClick={handleAddReference}>
-                  Attach
+                  <Plus size={14} /> {t('attachReference', uiLanguage)}
                 </button>
               </div>
 
-              {selectedReferences.length > 0 && (
+              {selectedReferences.length > 0 ? (
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                  {selectedReferences.map((ref, idx) => (
-                    <span key={idx} className="badge badge-secondary" style={{ fontSize: '0.78rem' }}>
-                      <Link size={12} style={{ marginRight: '4px' }} />
-                      {ref.type}: {ref.label}
+                  {selectedReferences.map((ref) => (
+                    <span
+                      key={`${ref.entityType}-${ref.entityId}`}
+                      className="badge badge-secondary"
+                      style={{ fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <Link size={12} />
+                      <span>
+                        {ref.entityType}: {resolveEntityLabel(brand, ref, contentLanguage)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveReference(ref.entityId)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 2px', display: 'flex', alignItems: 'center' }}
+                      >
+                        <X size={12} />
+                      </button>
                     </span>
                   ))}
+                </div>
+              ) : (
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  {t('noReferencesAttached', uiLanguage)}
                 </div>
               )}
             </div>
@@ -524,13 +533,13 @@ export const VisualRulesEditor: React.FC<VisualRulesEditorProps> = ({
             {selectedRule.references && selectedRule.references.length > 0 && (
               <div>
                 <h4 style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>
-                  References
+                  {t('attachedReferences', uiLanguage)}
                 </h4>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                   {selectedRule.references.map((ref, idx) => (
                     <span key={idx} className="badge badge-secondary" style={{ fontSize: '0.8rem' }}>
                       <Link size={12} style={{ marginRight: '4px' }} />
-                      {ref.type}: {ref.label}
+                      {ref.entityType}: {resolveEntityLabel(brand, ref, contentLanguage)}
                     </span>
                   ))}
                 </div>
@@ -538,6 +547,17 @@ export const VisualRulesEditor: React.FC<VisualRulesEditorProps> = ({
             )}
           </div>
         </div>
+      )}
+
+      {/* Reference Picker Modal */}
+      {showPickerModal && (
+        <ReferencePicker
+          brand={brand}
+          uiLanguage={uiLanguage}
+          selectedEntityIds={selectedReferences.map((r) => r.entityId)}
+          onSelect={handleSelectReference}
+          onClose={() => setShowPickerModal(false)}
+        />
       )}
     </div>
   );

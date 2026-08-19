@@ -345,6 +345,7 @@ export const App: React.FC = () => {
                 {activeModuleId === 'visualRules' && (
                   <VisualRulesEditor
                     data={activeBrand.modules.visualRules || []}
+                    brand={activeBrand}
                     uiLanguage={uiLanguage}
                     contentLanguage={contentLanguage}
                     onChange={(updated) => handleUpdateModuleData('visualRules', updated)}
@@ -353,6 +354,7 @@ export const App: React.FC = () => {
                 {activeModuleId === 'messaging' && (
                   <MessagingEditor
                     data={activeBrand.modules.messaging}
+                    brand={activeBrand}
                     uiLanguage={uiLanguage}
                     contentLanguage={contentLanguage}
                     onChange={(updated) => handleUpdateModuleData('messaging', updated)}
