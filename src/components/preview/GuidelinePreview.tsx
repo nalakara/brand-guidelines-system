@@ -2,6 +2,7 @@ import React from 'react';
 import { Brand, ModuleId, Language, getLocalizedText } from '../../types/brand';
 import { Edit2, CheckCircle2 } from 'lucide-react';
 import { PreviewNaming } from './sections/PreviewNaming';
+import { PreviewArchitecture } from './sections/PreviewArchitecture';
 import { PreviewExpression } from './sections/PreviewExpression';
 import '../../styles/preview.css';
 
@@ -771,6 +772,16 @@ export const GuidelinePreview: React.FC<GuidelinePreviewProps> = ({
       {/* Brand Naming Section (Level 3.2) */}
       {activeModuleIds.includes('brandNaming') && brand.modules.brandNaming && (
         <PreviewNaming
+          brand={brand}
+          contentLanguage={contentLanguage}
+          onJumpToModule={onJumpToModule}
+          sectionNumber={sectionCounter++}
+        />
+      )}
+
+      {/* Brand Architecture Section (Level 3.3) */}
+      {activeModuleIds.includes('brandArchitecture') && brand.modules.brandArchitecture && (
+        <PreviewArchitecture
           brand={brand}
           contentLanguage={contentLanguage}
           onJumpToModule={onJumpToModule}

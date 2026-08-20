@@ -23,6 +23,8 @@ import {
   IconographySystemEntity,
   TouchpointEntity,
   NamingSystemEntity,
+  BrandArchitectureNodeEntity,
+  BrandRelationshipEntity,
   LocalizedString
 } from '../types/brand';
 
@@ -606,6 +608,86 @@ export function normalizeBrandData(brand: Brand): Brand {
     modules.brandNaming = {
       principlesOverview: rawNaming.principlesOverview || { en: '', id: '' },
       systems
+    };
+  }
+
+  // 12. Normalize Brand Architecture (Level 3.3)
+  if (modules.brandArchitecture || brand.activeModules?.includes('brandArchitecture')) {
+    const rawArch: any = modules.brandArchitecture || {};
+
+    // Normalize nodes (no synthetic nodes fabricated)
+    const rawNodes: any[] = Array.isArray(rawArch.nodes) ? rawArch.nodes : [];
+    const validNodeIds = new Set<string>();
+
+    const nodes: BrandArchitectureNodeEntity[] = rawNodes.map((n: any, idx: number) => {
+      const id = n.id || `node-${idx + 1}`;
+      validNodeIds.add(id);
+
+      const nameVal: any = n.name;
+      const normalizedName = typeof nameVal === 'object' && nameVal !== null
+        ? { en: nameVal.en || '', id: nameVal.id || '' }
+        : { en: typeof nameVal === 'string' ? nameVal : '', id: typeof nameVal === 'string' ? nameVal : '' };
+
+      return {
+        id,
+        name: normalizedName,
+        nodeType: n.nodeType || 'subBrand',
+        status: n.status || 'active',
+        description: n.description || { en: '', id: '' },
+        targetMarketOrAudience: n.targetMarketOrAudience || { en: '', id: '' },
+        governingRuleRefs: Array.isArray(n.governingRuleRefs) ? n.governingRuleRefs : [],
+        targetAudienceRefs: Array.isArray(n.targetAudienceRefs) ? n.targetAudienceRefs : []
+      };
+    });
+
+    // Normalize relationships with foundational graph integrity rules:
+    // 1. Must reference existing nodes (sourceNodeId & targetNodeId in validNodeIds)
+    // 2. Prevent self-reference (sourceNodeId !== targetNodeId)
+    // 3. Deduplicate exact duplicate directed edges (same source, target, relationshipType)
+    const rawRelationships: any[] = Array.isArray(rawArch.relationships) ? rawArch.relationships : [];
+    const seenEdges = new Set<string>();
+
+    const relationships: BrandRelationshipEntity[] = [];
+
+    rawRelationships.forEach((rel: any, idx: number) => {
+      const sourceNodeId = rel.sourceNodeId;
+      const targetNodeId = rel.targetNodeId;
+      const relationshipType = rel.relationshipType || 'parentOf';
+
+      // Graph Rule 1: Both nodes must exist if nodes are defined
+      if (validNodeIds.size > 0 && (!validNodeIds.has(sourceNodeId) || !validNodeIds.has(targetNodeId))) {
+        return; // Ignore dangling edge
+      }
+
+      // Graph Rule 2: No self-references
+      if (sourceNodeId && targetNodeId && sourceNodeId === targetNodeId) {
+        return; // Ignore self loop
+      }
+
+      // Graph Rule 3: Deduplicate exact directed edge
+      const edgeKey = `${sourceNodeId}->${targetNodeId}:${relationshipType}`;
+      if (seenEdges.has(edgeKey)) {
+        return; // Ignore duplicate relationship
+      }
+      seenEdges.add(edgeKey);
+
+      relationships.push({
+        id: rel.id || `rel-${idx + 1}`,
+        sourceNodeId: sourceNodeId || '',
+        targetNodeId: targetNodeId || '',
+        relationshipType,
+        coupling: rel.coupling || 'monolithic',
+        endorsementRuleNotes: rel.endorsementRuleNotes || { en: '', id: '' },
+        governingRuleRefs: Array.isArray(rel.governingRuleRefs) ? rel.governingRuleRefs : [],
+        sharedAssetRefs: Array.isArray(rel.sharedAssetRefs) ? rel.sharedAssetRefs : []
+      });
+    });
+
+    modules.brandArchitecture = {
+      strategyOverview: rawArch.strategyOverview || { en: '', id: '' },
+      strategyType: rawArch.strategyType || 'hybrid',
+      nodes,
+      relationships
     };
   }
 

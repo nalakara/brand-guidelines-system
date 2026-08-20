@@ -34,7 +34,7 @@ export const MODULE_GROUPS: ModuleGroup[] = [
   },
   {
     domainKey: 'domainFoundation',
-    moduleIds: ['strategy', 'positioning', 'personality', 'voiceTone', 'messaging', 'brandNaming']
+    moduleIds: ['strategy', 'positioning', 'personality', 'voiceTone', 'messaging', 'brandNaming', 'brandArchitecture']
   },
   {
     domainKey: 'domainVisualGuidelines',
@@ -54,6 +54,7 @@ export const ALL_MODULE_IDS: ModuleId[] = [
   'voiceTone',
   'messaging',
   'brandNaming',
+  'brandArchitecture',
   'visualKnowledge',
   'visualAssets',
   'visualRules',
@@ -289,6 +290,25 @@ export const MODULE_REGISTRY: Record<ModuleId, ModuleDefinition> = {
       const systemsCount = data.systems?.length || 0;
       if (systemsCount === 0) return 'empty';
       if (systemsCount >= 1) return 'complete';
+      return 'started';
+    }
+  },
+  brandArchitecture: {
+    id: 'brandArchitecture',
+    nameKey: 'moduleBrandArchitecture',
+    shortDescription: 'Portfolio hierarchy, sub-brands, endorsement relationships, and visual coupling tiers.',
+    iconName: 'Network',
+    defaultData: () => ({
+      strategyOverview: { en: '', id: '' },
+      strategyType: 'hybrid',
+      nodes: [],
+      relationships: []
+    }),
+    calculateCompletion: (data?: any): CompletionStatus => {
+      if (!data) return 'empty';
+      const nodesCount = data.nodes?.length || 0;
+      if (nodesCount === 0) return 'empty';
+      if (nodesCount >= 2) return 'complete';
       return 'started';
     }
   },

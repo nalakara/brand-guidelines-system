@@ -139,6 +139,7 @@ export const sampleBrand: Brand = {
     'visualRules',
     'messaging',
     'brandNaming',
+    'brandArchitecture',
     'brandExpression'
   ],
   modules: {
@@ -1141,6 +1142,206 @@ export const sampleBrand: Brand = {
               entityType: 'proofPoint',
               entityId: 'pp-1',
               label: '100% direct-trade sourcing with transparent farm prices printed on every bag'
+            }
+          ]
+        }
+      ]
+    },
+    brandArchitecture: {
+      strategyType: 'hybrid',
+      strategyOverview: {
+        en: 'Northstar operates primarily as a Branded House across all direct retail cafe experiences and core coffee bean lines, while utilizing an Endorsed Model for specialized roastery micro-lots and consumer ready-to-drink products.',
+        id: 'Northstar beroperasi terutama sebagai Branded House di seluruh pengalaman kafe ritel langsung dan lini biji kopi utama, sambil menggunakan Model Endosemen untuk laboratorium sangrai mikro dan produk siap minum kemasan.'
+      },
+      nodes: [
+        {
+          id: 'node-master',
+          name: {
+            en: 'Northstar Coffee',
+            id: 'Kopi Northstar'
+          },
+          nodeType: 'corporateMaster',
+          status: 'active',
+          description: {
+            en: 'The master corporate entity holding all brand equity, cafe retail spaces, and direct-trade farm partnerships.',
+            id: 'Entitas induk korporat yang memegang seluruh ekuitas merek, ruang kafe ritel, dan kemitraan perdagangan langsung.'
+          },
+          targetMarketOrAudience: {
+            en: 'Neighborhood daily coffee drinkers and urban professionals seeking calming rituals.',
+            id: 'Peminum kopi harian lingkungan sekitar dan pekerja urban yang mencari ritual menenangkan.'
+          },
+          governingRuleRefs: [
+            {
+              domain: 'visualRules',
+              entityType: 'rule',
+              entityId: 'rule-logo-clearspace',
+              label: 'Primary Logo Minimum Clearspace'
+            }
+          ],
+          targetAudienceRefs: [
+            {
+              domain: 'foundation',
+              entityType: 'targetAudience',
+              entityId: 'aud-1',
+              label: 'Urban Professionals & Creative Freelancers'
+            }
+          ]
+        },
+        {
+          id: 'node-roastery',
+          name: {
+            en: 'Northstar Roastery Lab',
+            id: 'Laboratorium Sangrai Northstar'
+          },
+          nodeType: 'subBrand',
+          status: 'active',
+          description: {
+            en: 'Experimental roasting laboratory and educational cupping space for rare varietals.',
+            id: 'Laboratorium pemanggangan eksperimental dan ruang uji rasa edukatif untuk varietas langka.'
+          },
+          targetMarketOrAudience: {
+            en: 'Specialty coffee purists, home baristas, and wholesale hospitality partners.',
+            id: 'Peminum kopi purist spesialti, barista rumahan, dan mitra horeka grosir.'
+          },
+          governingRuleRefs: [
+            {
+              domain: 'visualRules',
+              entityType: 'rule',
+              entityId: 'rule-color-contrast',
+              label: 'Warm Parchment Background Contrast'
+            }
+          ],
+          targetAudienceRefs: [
+            {
+              domain: 'foundation',
+              entityType: 'targetAudience',
+              entityId: 'aud-2',
+              label: 'Specialty Coffee Purists & Sourcing Advocates'
+            }
+          ]
+        },
+        {
+          id: 'node-rtd',
+          name: {
+            en: 'Northstar Daily Rituals RTD',
+            id: 'RTD Ritual Harian Northstar'
+          },
+          nodeType: 'endorsedBrand',
+          status: 'active',
+          description: {
+            en: 'Ready-to-drink nitro cold brew and canned specialty lattes distributed in premium organic grocers.',
+            id: 'Nitro cold brew siap minum dan latte spesialti kaleng yang didistribusikan di gerai organik premium.'
+          },
+          targetMarketOrAudience: {
+            en: 'On-the-go commuters and remote workers wanting cafe-grade coffee anywhere.',
+            id: 'Komuter yang dinamis dan pekerja jarak jauh yang menginginkan kopi berkualitas kafe di mana saja.'
+          },
+          governingRuleRefs: [
+            {
+              domain: 'visualRules',
+              entityType: 'rule',
+              entityId: 'rule-photo-authenticity',
+              label: 'Authentic Morning Lighting Requirement'
+            }
+          ]
+        },
+        {
+          id: 'node-bali-cacao',
+          name: {
+            en: 'Bali Cacao Co-Lab',
+            id: 'Kolaborasi Kakao Bali'
+          },
+          nodeType: 'partnerBrand',
+          status: 'active',
+          description: {
+            en: 'Single-origin craft chocolate and mocha fusion co-branding partnership with Tabanan organic cocoa farmers.',
+            id: 'Kemitraan co-branding cokelat kriya single-origin dan moka bersama petani kakao organik Tabanan.'
+          },
+          targetMarketOrAudience: {
+            en: 'Artisanal food and beverage lovers interested in ethical Indonesian agroforestry.',
+            id: 'Pencinta makanan dan minuman artisan yang tertarik pada agroforestri etis Indonesia.'
+          }
+        }
+      ],
+      relationships: [
+        {
+          id: 'rel-1',
+          sourceNodeId: 'node-master',
+          targetNodeId: 'node-roastery',
+          relationshipType: 'parentOf',
+          coupling: 'monolithic',
+          endorsementRuleNotes: {
+            en: 'Shares 100% core typography and primary palette; uses "Roastery Lab" sub-heading locked under the Northstar mark.',
+            id: 'Berbagi 100% tipografi utama dan palet inti; menggunakan sub-judul "Roastery Lab" terkunci di bawah logo Northstar.'
+          },
+          governingRuleRefs: [
+            {
+              domain: 'visualRules',
+              entityType: 'rule',
+              entityId: 'rule-logo-clearspace',
+              label: 'Primary Logo Minimum Clearspace'
+            }
+          ],
+          sharedAssetRefs: [
+            {
+              domain: 'visualAssets',
+              entityType: 'asset',
+              entityId: 'asset-wordmark-vector',
+              label: 'Northstar Wordmark Vector Package'
+            }
+          ]
+        },
+        {
+          id: 'rel-2',
+          sourceNodeId: 'node-master',
+          targetNodeId: 'node-rtd',
+          relationshipType: 'endorses',
+          coupling: 'endorsed',
+          endorsementRuleNotes: {
+            en: 'Daily Rituals wordmark is hero; Northstar compass emblem and endorsement lockup must appear at 30% scale on the back panel seal.',
+            id: 'Wordmark Daily Rituals menjadi elemen utama; simbol kompas Northstar dan teks dukungan wajib muncul dengan skala 30% pada segel panel belakang.'
+          },
+          governingRuleRefs: [
+            {
+              domain: 'visualRules',
+              entityType: 'rule',
+              entityId: 'rule-photo-authenticity',
+              label: 'Authentic Morning Lighting Requirement'
+            }
+          ],
+          sharedAssetRefs: [
+            {
+              domain: 'visualAssets',
+              entityType: 'asset',
+              entityId: 'asset-wordmark-vector',
+              label: 'Northstar Wordmark Vector Package'
+            }
+          ]
+        },
+        {
+          id: 'rel-3',
+          sourceNodeId: 'node-master',
+          targetNodeId: 'node-bali-cacao',
+          relationshipType: 'partnerWith',
+          coupling: 'coBranded',
+          endorsementRuleNotes: {
+            en: 'Equal 50/50 visual weight lockup with a fine vertical hairline divider on collaborative packaging sleeves.',
+            id: 'Bobot visual setara 50/50 dengan garis pemisah tipis vertikal pada selongsong kemasan kolaborasi.'
+          },
+          governingRuleRefs: [
+            {
+              domain: 'visualRules',
+              entityType: 'rule',
+              entityId: 'rule-logo-clearspace',
+              label: 'Primary Logo Minimum Clearspace'
+            }
+          ],
+          sharedAssetRefs: [
+            {
+              domain: 'visualAssets',
+              entityType: 'asset',
+              entityId: 'asset-wordmark-vector',
+              label: 'Northstar Wordmark Vector Package'
             }
           ]
         }

@@ -31,6 +31,7 @@ import { VisualAssetsEditor } from './components/editors/VisualAssetsEditor';
 import { VisualRulesEditor } from './components/editors/VisualRulesEditor';
 import { MessagingEditor } from './components/editors/MessagingEditor';
 import { NamingEditor } from './components/editors/NamingEditor';
+import { BrandArchitectureEditor } from './components/editors/BrandArchitectureEditor';
 import { TouchpointsEditor } from './components/editors/TouchpointsEditor';
 
 export const App: React.FC = () => {
@@ -369,6 +370,15 @@ export const App: React.FC = () => {
                     uiLanguage={uiLanguage}
                     contentLanguage={contentLanguage}
                     onChange={(updated) => handleUpdateModuleData('brandNaming', updated)}
+                  />
+                )}
+                {activeModuleId === 'brandArchitecture' && (
+                  <BrandArchitectureEditor
+                    data={activeBrand.modules.brandArchitecture}
+                    brand={activeBrand}
+                    uiLanguage={uiLanguage}
+                    contentLanguage={contentLanguage}
+                    onChange={(updated) => handleUpdateModuleData('brandArchitecture', updated)}
                   />
                 )}
                 {activeModuleId === 'brandExpression' && (

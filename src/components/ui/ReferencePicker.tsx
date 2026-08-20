@@ -29,7 +29,8 @@ const DOMAIN_TABS: { domain?: EntityDomain; labelKey: string }[] = [
   { domain: 'visualKnowledge', labelKey: 'pickerDomainVisualKnowledge' },
   { domain: 'visualAssets', labelKey: 'pickerDomainVisualAssets' },
   { domain: 'visualRules', labelKey: 'pickerDomainVisualRules' },
-  { domain: 'brandExpression', labelKey: 'pickerDomainBrandExpression' }
+  { domain: 'brandExpression', labelKey: 'pickerDomainBrandExpression' },
+  { domain: 'brandArchitecture', labelKey: 'pickerDomainBrandArchitecture' }
 ];
 
 export const ReferencePicker: React.FC<ReferencePickerProps> = ({

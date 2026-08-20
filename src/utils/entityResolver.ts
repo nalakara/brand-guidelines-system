@@ -318,7 +318,7 @@ export function getAvailableEntities(
   // 18. Visual Assets
   if (modules.visualAssets) {
     modules.visualAssets.forEach((a) => {
-      const firstFile = a.files[0];
+      const firstFile = a.files?.[0];
       items.push({
         reference: {
           domain: 'visualAssets',
@@ -377,6 +377,22 @@ export function getAvailableEntities(
         },
         name: getLocalizedText(sys.title, lang).text || 'Naming System',
         categoryOrRole: `${sys.tier} · ${sys.approach}`
+      });
+    });
+  }
+
+  // 19. Brand Architecture: Architecture Nodes (Level 3.3)
+  if (modules.brandArchitecture?.nodes) {
+    modules.brandArchitecture.nodes.forEach((node) => {
+      items.push({
+        reference: {
+          domain: 'brandArchitecture',
+          entityType: 'brandArchitectureNode',
+          entityId: node.id,
+          label: getLocalizedText(node.name, lang).text || 'Architecture Node'
+        },
+        name: getLocalizedText(node.name, lang).text || 'Architecture Node',
+        categoryOrRole: `${node.nodeType} · ${node.status}`
       });
     });
   }
@@ -498,6 +514,55 @@ export function findBackReferences(
         });
       }
     });
+  }
+
+  // Check Brand Architecture Nodes & Relationships (Level 3.3)
+  if (modules.brandArchitecture) {
+    // 1. Check Node direct references (governing rules, target audiences)
+    if (modules.brandArchitecture.nodes) {
+      modules.brandArchitecture.nodes.forEach((node) => {
+        const nodeRefs = [
+          ...(node.governingRuleRefs || []),
+          ...(node.targetAudienceRefs || [])
+        ];
+        if (nodeRefs.some((r) => r.entityId === targetEntityId)) {
+          const nodeName = getLocalizedText(node.name, 'en').text || 'Architecture Node';
+          results.push({
+            sourceDomain: 'Brand Architecture',
+            sourceEntityType: 'brandArchitectureNode',
+            sourceName: nodeName,
+            referencerName: nodeName,
+            referencerDomain: 'brandArchitecture'
+          });
+        }
+      });
+    }
+
+    // 2. Check Relationship references (governing rules, shared co-brand assets)
+    if (modules.brandArchitecture.relationships) {
+      modules.brandArchitecture.relationships.forEach((rel) => {
+        const relRefs = [
+          ...(rel.governingRuleRefs || []),
+          ...(rel.sharedAssetRefs || [])
+        ];
+        if (relRefs.some((r) => r.entityId === targetEntityId)) {
+          // Label relationship by its source -> target topology
+          const sourceNode = modules.brandArchitecture?.nodes?.find((n) => n.id === rel.sourceNodeId);
+          const targetNode = modules.brandArchitecture?.nodes?.find((n) => n.id === rel.targetNodeId);
+          const sName = sourceNode ? getLocalizedText(sourceNode.name, 'en').text : rel.sourceNodeId;
+          const tName = targetNode ? getLocalizedText(targetNode.name, 'en').text : rel.targetNodeId;
+          const relLabel = `${sName} → ${tName} (${rel.relationshipType})`;
+
+          results.push({
+            sourceDomain: 'Brand Architecture',
+            sourceEntityType: 'brandArchitectureNode',
+            sourceName: relLabel,
+            referencerName: relLabel,
+            referencerDomain: 'brandArchitecture'
+          });
+        }
+      });
+    }
   }
 
   return results;

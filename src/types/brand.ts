@@ -6,6 +6,7 @@ export type ModuleId =
   | 'voiceTone'
   | 'messaging'
   | 'brandNaming'
+  | 'brandArchitecture'
   | 'visualBasics'
   | 'visualKnowledge'
   | 'visualAssets'
@@ -60,7 +61,8 @@ export type EntityDomain =
   | 'visualKnowledge'
   | 'visualAssets'
   | 'visualRules'
-  | 'brandExpression';
+  | 'brandExpression'
+  | 'brandArchitecture';
 
 export type EntityType =
   // Foundation Entities
@@ -76,6 +78,8 @@ export type EntityType =
   | 'proofPoint'
   | 'callToAction'
   | 'namingSystem'
+  // Brand Architecture Entities (First-class reusable Brand Knowledge)
+  | 'brandArchitectureNode'
   // Visual Knowledge Entities
   | 'logo'
   | 'color'
@@ -142,6 +146,62 @@ export interface NamingSystemEntity {
 export interface BrandNamingModule {
   principlesOverview?: LocalizedString;
   systems: NamingSystemEntity[];
+}
+
+// --- Brand Architecture Entities (Phase 3.3) ---
+
+export type BrandArchitectureStrategyType =
+  | 'brandedHouse'      // Monolithic masterbrand (e.g. Virgin, FedEx)
+  | 'houseOfBrands'     // Standalone independent brands (e.g. P&G, Unilever)
+  | 'endorsed'          // Endorsement model (e.g. Marriott, Nestlé)
+  | 'hybrid';           // Combination portfolio (e.g. Alphabet, Northstar)
+
+export type BrandNodeType =
+  | 'corporateMaster'   // Parent holding / master corporate brand
+  | 'subBrand'          // Dependent sub-brand sharing master equity
+  | 'endorsedBrand'     // Distinct brand with parent endorsement
+  | 'productBrand'      // Autonomous freestanding product brand
+  | 'ingredientBrand'   // Ingredient / proprietary technology brand
+  | 'partnerBrand';     // External co-branding entity
+
+export type CouplingLevel =
+  | 'monolithic'        // 100% shared visual identity (lockup only)
+  | 'endorsed'          // Unique mark + mandatory endorsement lockup
+  | 'freestanding'      // Completely independent mark & palette
+  | 'coBranded';        // Dual-branding lockup with strict clearance ratios
+
+export interface BrandArchitectureNodeEntity {
+  id: string;                   // 'node-master', 'node-roastery'
+  name: LocalizedString;        // "Northstar Roastery Lab"
+  nodeType: BrandNodeType;
+  status: 'active' | 'incubating' | 'retired';
+  description?: LocalizedString;
+  targetMarketOrAudience?: LocalizedString;
+  governingRuleRefs?: EntityReference[];
+  targetAudienceRefs?: EntityReference[];
+}
+
+export interface BrandRelationshipEntity {
+  id: string;                   // 'rel-1'
+  sourceNodeId: string;         // 'node-master'
+  targetNodeId: string;         // 'node-roastery'
+  relationshipType:
+    | 'parentOf'
+    | 'endorses'
+    | 'subBrandOf'
+    | 'ingredientIn'
+    | 'partnerWith';
+  coupling: CouplingLevel;
+  endorsementRuleNotes?: LocalizedString; // "Parent logo must appear at 30% scale on reverse"
+  governingRuleRefs?: EntityReference[];  // Governing Visual Rules
+  sharedAssetRefs?: EntityReference[];    // Co-brand lockups in Visual Assets
+}
+
+export interface BrandArchitectureModule {
+  strategyOverview?: LocalizedString;
+  strategyType: BrandArchitectureStrategyType;
+  nodes: BrandArchitectureNodeEntity[];
+  relationships: BrandRelationshipEntity[];
 }
 
 // --- Brand Expression Entities ---
@@ -739,6 +799,7 @@ export interface BrandModulesData {
   visualRules?: VisualRuleItem[];
   messaging?: MessagingModule;
   brandNaming?: BrandNamingModule;
+  brandArchitecture?: BrandArchitectureModule;
   brandExpression?: BrandExpressionModule;
 }
 
