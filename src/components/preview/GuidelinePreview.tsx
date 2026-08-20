@@ -1,6 +1,7 @@
 import React from 'react';
 import { Brand, ModuleId, Language, getLocalizedText } from '../../types/brand';
 import { Edit2, CheckCircle2 } from 'lucide-react';
+import { PreviewNaming } from './sections/PreviewNaming';
 import { PreviewExpression } from './sections/PreviewExpression';
 import '../../styles/preview.css';
 
@@ -765,6 +766,16 @@ export const GuidelinePreview: React.FC<GuidelinePreviewProps> = ({
             </div>
           )}
         </section>
+      )}
+
+      {/* Brand Naming Section (Level 3.2) */}
+      {activeModuleIds.includes('brandNaming') && brand.modules.brandNaming && (
+        <PreviewNaming
+          brand={brand}
+          contentLanguage={contentLanguage}
+          onJumpToModule={onJumpToModule}
+          sectionNumber={sectionCounter++}
+        />
       )}
 
       {/* 8. Visual Assets Section */}

@@ -365,6 +365,22 @@ export function getAvailableEntities(
     });
   }
 
+  // 18. Foundation: Brand Naming Systems (Level 3.2)
+  if (modules.brandNaming?.systems) {
+    modules.brandNaming.systems.forEach((sys) => {
+      items.push({
+        reference: {
+          domain: 'foundation',
+          entityType: 'namingSystem',
+          entityId: sys.id,
+          label: getLocalizedText(sys.title, lang).text || 'Naming System'
+        },
+        name: getLocalizedText(sys.title, lang).text || 'Naming System',
+        categoryOrRole: `${sys.tier} · ${sys.approach}`
+      });
+    });
+  }
+
   return items.filter((item) => {
     const matchesDomain = !filterDomain || item.reference.domain === filterDomain;
     const matchesType = !filterType || item.reference.entityType === filterType;
@@ -458,6 +474,27 @@ export function findBackReferences(
           sourceName: tpName,
           referencerName: tpName,
           referencerDomain: 'brandExpression'
+        });
+      }
+    });
+  }
+
+  // Check Brand Naming Systems (Level 3.2)
+  if (modules.brandNaming?.systems) {
+    modules.brandNaming.systems.forEach((sys) => {
+      const allSysRefs = [
+        ...(sys.governingRuleRefs || []),
+        ...(sys.targetAudienceRefs || []),
+        ...(sys.supportingMessageRefs || [])
+      ];
+      if (allSysRefs.some((r) => r.entityId === targetEntityId)) {
+        const sysTitle = getLocalizedText(sys.title, 'en').text || 'Naming System';
+        results.push({
+          sourceDomain: 'Brand Naming',
+          sourceEntityType: 'namingSystem',
+          sourceName: sysTitle,
+          referencerName: sysTitle,
+          referencerDomain: 'brandNaming'
         });
       }
     });

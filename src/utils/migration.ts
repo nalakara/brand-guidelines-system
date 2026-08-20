@@ -22,6 +22,7 @@ import {
   IllustrationStyleEntity,
   IconographySystemEntity,
   TouchpointEntity,
+  NamingSystemEntity,
   LocalizedString
 } from '../types/brand';
 
@@ -571,6 +572,40 @@ export function normalizeBrandData(brand: Brand): Brand {
     modules.brandExpression = {
       overview: rawExpr.overview || { en: '', id: '' },
       touchpoints
+    };
+  }
+
+  // 11. Normalize Brand Naming (Level 3.2)
+  if (modules.brandNaming || brand.activeModules?.includes('brandNaming')) {
+    const rawNaming: any = modules.brandNaming || {};
+    const systems: NamingSystemEntity[] = Array.isArray(rawNaming.systems)
+      ? rawNaming.systems.map((sys: any, idx: number) => ({
+          id: sys.id || `name-sys-${idx + 1}`,
+          title: sys.title || { en: 'Naming System', id: 'Sistem Penamaan' },
+          tier: sys.tier || 'productTier',
+          approach: sys.approach || 'descriptive',
+          formula: Array.isArray(sys.formula)
+            ? sys.formula.map((step: any) => ({
+                role: step.role || 'descriptor',
+                label: step.label || { en: '', id: '' },
+                required: typeof step.required === 'boolean' ? step.required : true
+              }))
+            : [],
+          principles: sys.principles || { en: '', id: '' },
+          examples: {
+            approved: Array.isArray(sys.examples?.approved) ? sys.examples.approved : [],
+            prohibited: Array.isArray(sys.examples?.prohibited) ? sys.examples.prohibited : [],
+            rationale: sys.examples?.rationale || { en: '', id: '' }
+          },
+          governingRuleRefs: Array.isArray(sys.governingRuleRefs) ? sys.governingRuleRefs : [],
+          targetAudienceRefs: Array.isArray(sys.targetAudienceRefs) ? sys.targetAudienceRefs : [],
+          supportingMessageRefs: Array.isArray(sys.supportingMessageRefs) ? sys.supportingMessageRefs : []
+        }))
+      : [];
+
+    modules.brandNaming = {
+      principlesOverview: rawNaming.principlesOverview || { en: '', id: '' },
+      systems
     };
   }
 

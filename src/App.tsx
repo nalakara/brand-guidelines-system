@@ -30,6 +30,7 @@ import { LayoutCompositionEditor } from './components/editors/LayoutCompositionE
 import { VisualAssetsEditor } from './components/editors/VisualAssetsEditor';
 import { VisualRulesEditor } from './components/editors/VisualRulesEditor';
 import { MessagingEditor } from './components/editors/MessagingEditor';
+import { NamingEditor } from './components/editors/NamingEditor';
 import { TouchpointsEditor } from './components/editors/TouchpointsEditor';
 
 export const App: React.FC = () => {
@@ -359,6 +360,15 @@ export const App: React.FC = () => {
                     uiLanguage={uiLanguage}
                     contentLanguage={contentLanguage}
                     onChange={(updated) => handleUpdateModuleData('messaging', updated)}
+                  />
+                )}
+                {activeModuleId === 'brandNaming' && (
+                  <NamingEditor
+                    data={activeBrand.modules.brandNaming}
+                    brand={activeBrand}
+                    uiLanguage={uiLanguage}
+                    contentLanguage={contentLanguage}
+                    onChange={(updated) => handleUpdateModuleData('brandNaming', updated)}
                   />
                 )}
                 {activeModuleId === 'brandExpression' && (

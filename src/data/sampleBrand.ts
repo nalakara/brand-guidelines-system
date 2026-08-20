@@ -138,6 +138,7 @@ export const sampleBrand: Brand = {
     'visualAssets',
     'visualRules',
     'messaging',
+    'brandNaming',
     'brandExpression'
   ],
   modules: {
@@ -1003,6 +1004,145 @@ export const sampleBrand: Brand = {
             id: 'Cicipi hasil panen musim ini'
           },
           contextChannel: 'Retail Menu'
+        }
+      ]
+    },
+    brandNaming: {
+      principlesOverview: {
+        en: 'Northstar names products using grounded celestial and navigational metaphors paired with honest, unpretentious flavor descriptors. Names avoid hyperbole, luxury claims, or technical jargon.',
+        id: 'Northstar menamai produk menggunakan metafora langit dan navigasi yang membumi, dipadukan dengan deskriptor rasa yang jujur dan bersahaja. Nama menghindari klaim kemewahan yang berlebihan atau jargon teknis.'
+      },
+      systems: [
+        {
+          id: 'name-sys-1',
+          title: {
+            en: 'Seasonal Blend & Harvest Nomenclature',
+            id: 'Nomenklatur Racikan Musiman & Hasil Panen'
+          },
+          tier: 'productTier',
+          approach: 'metaphorical',
+          formula: [
+            {
+              role: 'brandPrefix',
+              label: { en: 'Northstar', id: 'Northstar' },
+              required: true
+            },
+            {
+              role: 'descriptor',
+              label: { en: 'Celestial / Astronomical Event', id: 'Peristiwa Astronomi / Langit' },
+              required: true
+            },
+            {
+              role: 'tierSuffix',
+              label: { en: 'Blend / Roast', id: 'Blend / Roast' },
+              required: true
+            }
+          ],
+          principles: {
+            en: 'Blends use evocative navigational terms that evoke time of day and warmth without sounding aristocratic.',
+            id: 'Racikan menggunakan istilah navigasi evokatif yang menggambarkan waktu dan kehangatan tanpa terdengar elitis.'
+          },
+          examples: {
+            approved: [
+              'Northstar Solstice Roast',
+              'Northstar Equinox Blend',
+              'Northstar Daybreak Espresso'
+            ],
+            prohibited: [
+              'Northstar Imperial Gold Blend',
+              'Northstar Royal Supreme Coffee',
+              'Northstar Hyper-Caffeine Ultra'
+            ],
+            rationale: {
+              en: 'Avoid hierarchical, aristocratic words (Royal, Imperial, Gold) which directly violate the Unpretentious brand trait.',
+              id: 'Hindari kata-kata bernada elitis atau bangsawan (Royal, Imperial, Gold) yang melanggar sifat merek Bersahaja.'
+            }
+          },
+          governingRuleRefs: [
+            {
+              domain: 'visualRules',
+              entityType: 'rule',
+              entityId: 'vr-2',
+              label: 'Warm Parchment Background Contrast'
+            }
+          ],
+          targetAudienceRefs: [
+            {
+              domain: 'foundation',
+              entityType: 'targetAudience',
+              entityId: 'aud-1',
+              label: 'Urban Professionals & Creative Freelancers'
+            }
+          ],
+          supportingMessageRefs: [
+            {
+              domain: 'foundation',
+              entityType: 'keyMessage',
+              entityId: 'km-1',
+              label: 'Coffee that grounds your day, not rushes it.'
+            }
+          ]
+        },
+        {
+          id: 'name-sys-2',
+          title: {
+            en: 'Single-Origin Direct-Trade Farm Lots',
+            id: 'Lot Biji Kopi Single-Origin Perdagangan Langsung'
+          },
+          tier: 'productTier',
+          approach: 'descriptive',
+          formula: [
+            {
+              role: 'descriptor',
+              label: { en: 'Country / Origin Region', id: 'Negara / Daerah Asal' },
+              required: true
+            },
+            {
+              role: 'modifier',
+              label: { en: 'Producer / Estate Name', id: 'Nama Produser / Kebun' },
+              required: true
+            },
+            {
+              role: 'tierSuffix',
+              label: { en: 'Process Type (Washed / Natural)', id: 'Metode Proses (Washed / Natural)' },
+              required: false
+            }
+          ],
+          principles: {
+            en: 'Single origin lots must prioritize farm and producer visibility over branded marketing abstractions.',
+            id: 'Lot single origin wajib mengutamakan visibilitas petani dan perkebunan daripada nama pemasaran buatan.'
+          },
+          examples: {
+            approved: [
+              'Colombia Los Vasquez Washed',
+              'Ethiopia Guji Hambela Natural',
+              'Sumatra Kerinci Anaerobic'
+            ],
+            prohibited: [
+              'Northstar Mystic Jungle Reserve',
+              'Northstar Secret Andean Mountain Blend'
+            ],
+            rationale: {
+              en: 'Never hide origin producer names behind fantasy brand names. Transparency is our core proof point.',
+              id: 'Jangan pernah menyembunyikan nama petani di balik nama fantasi merek. Transparansi adalah bukti nyata utama kami.'
+            }
+          },
+          targetAudienceRefs: [
+            {
+              domain: 'foundation',
+              entityType: 'targetAudience',
+              entityId: 'aud-2',
+              label: 'Specialty Coffee Purists & Sourcing Advocates'
+            }
+          ],
+          supportingMessageRefs: [
+            {
+              domain: 'foundation',
+              entityType: 'proofPoint',
+              entityId: 'pp-1',
+              label: '100% direct-trade sourcing with transparent farm prices printed on every bag'
+            }
+          ]
         }
       ]
     },

@@ -34,7 +34,7 @@ export const MODULE_GROUPS: ModuleGroup[] = [
   },
   {
     domainKey: 'domainFoundation',
-    moduleIds: ['strategy', 'positioning', 'personality', 'voiceTone', 'messaging']
+    moduleIds: ['strategy', 'positioning', 'personality', 'voiceTone', 'messaging', 'brandNaming']
   },
   {
     domainKey: 'domainVisualGuidelines',
@@ -53,6 +53,7 @@ export const ALL_MODULE_IDS: ModuleId[] = [
   'personality',
   'voiceTone',
   'messaging',
+  'brandNaming',
   'visualKnowledge',
   'visualAssets',
   'visualRules',
@@ -271,6 +272,23 @@ export const MODULE_REGISTRY: Record<ModuleId, ModuleDefinition> = {
       
       if (!hasTagline && !hasPitch && keyMsgsCount === 0) return 'empty';
       if ((hasTagline || hasPitch) && keyMsgsCount >= 2) return 'complete';
+      return 'started';
+    }
+  },
+  brandNaming: {
+    id: 'brandNaming',
+    nameKey: 'moduleBrandNaming',
+    shortDescription: 'Naming taxonomy, formulas, approved & prohibited examples, and governance tiers.',
+    iconName: 'Tag',
+    defaultData: () => ({
+      principlesOverview: { en: '', id: '' },
+      systems: []
+    }),
+    calculateCompletion: (data?: any): CompletionStatus => {
+      if (!data) return 'empty';
+      const systemsCount = data.systems?.length || 0;
+      if (systemsCount === 0) return 'empty';
+      if (systemsCount >= 1) return 'complete';
       return 'started';
     }
   },

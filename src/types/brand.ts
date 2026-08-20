@@ -4,11 +4,12 @@ export type ModuleId =
   | 'positioning'
   | 'personality'
   | 'voiceTone'
+  | 'messaging'
+  | 'brandNaming'
   | 'visualBasics'
   | 'visualKnowledge'
   | 'visualAssets'
   | 'visualRules'
-  | 'messaging'
   | 'brandExpression';
 
 export type Language = 'en' | 'id';
@@ -74,6 +75,7 @@ export type EntityType =
   | 'keyMessage'
   | 'proofPoint'
   | 'callToAction'
+  | 'namingSystem'
   // Visual Knowledge Entities
   | 'logo'
   | 'color'
@@ -97,6 +99,49 @@ export interface EntityReference {
   entityType: EntityType;
   entityId: string;
   label?: string; // Human label cached for quick render
+}
+
+// --- Brand Naming Entities (Phase 3.2) ---
+
+export type NamingApproach =
+  | 'descriptive'   // "Northstar Cold Brew"
+  | 'invented'      // "Aromatica"
+  | 'metaphorical'  // "Compass Blend"
+  | 'acronym'       // "NSC Reserves"
+  | 'arbitrary';
+
+export type NamingTier =
+  | 'flagship'      // Core product/brand line
+  | 'productTier'   // Premium, Standard, Lite
+  | 'feature'       // Internal capability or ingredient
+  | 'internalCode'; // Internal project naming
+
+export interface NamingFormulaStep {
+  role: 'brandPrefix' | 'descriptor' | 'tierSuffix' | 'modifier' | 'arbitrary';
+  label: LocalizedString; // e.g. "[Master Brand Name] + [Roast Profile] + 'Reserve'"
+  required: boolean;
+}
+
+export interface NamingSystemEntity {
+  id: string;                   // 'name-sys-1'
+  title: LocalizedString;       // "Blend & Single Origin Naming Taxonomy"
+  tier: NamingTier;
+  approach: NamingApproach;
+  formula: NamingFormulaStep[]; // Ordered formula blocks
+  principles?: LocalizedString; // Guiding philosophy for this naming branch
+  examples: {
+    approved: string[];         // ["Northstar Solstice Roast", "Northstar Equinox Blend"]
+    prohibited: string[];       // ["Northstar Luxury Java Blend"]
+    rationale?: LocalizedString;// "Avoid 'Luxury' descriptor as it violates Unpretentious trait"
+  };
+  governingRuleRefs?: EntityReference[];
+  targetAudienceRefs?: EntityReference[];
+  supportingMessageRefs?: EntityReference[];
+}
+
+export interface BrandNamingModule {
+  principlesOverview?: LocalizedString;
+  systems: NamingSystemEntity[];
 }
 
 // --- Brand Expression Entities ---
@@ -693,6 +738,7 @@ export interface BrandModulesData {
   visualAssets?: VisualAssetItem[];
   visualRules?: VisualRuleItem[];
   messaging?: MessagingModule;
+  brandNaming?: BrandNamingModule;
   brandExpression?: BrandExpressionModule;
 }
 
