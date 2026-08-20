@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   VisualBasicsModule,
   Language,
   ImageryData,
-  PhotographyData,
-  ArtDirectionData,
-  ImageCharacteristicsData,
-  updateLocalizedString,
-  getLocalizedText
+  ImageryDirectionEntity,
+  ImageTreatmentEntity
 } from '../../types/brand';
-import { LocalizedTextarea, LocalizedInput } from '../ui/LocalizedInput';
+import { LocalizedInput, LocalizedTextarea } from '../ui/LocalizedInput';
 import { t } from '../../i18n/translations';
-import { Plus, Edit2, Camera, Palette, Sliders, Check } from 'lucide-react';
+import {
+  Plus,
+  Trash2,
+  Camera,
+  Palette
+} from 'lucide-react';
 
 interface ImageryEditorProps {
   data?: VisualBasicsModule;
@@ -20,11 +22,10 @@ interface ImageryEditorProps {
   onChange: (updated: VisualBasicsModule) => void;
 }
 
-const PREDEFINED_MOODS = ['Warm', 'Natural', 'Human', 'Energetic', 'Calm', 'Editorial', 'Understated', 'Playful', 'Dramatic'];
-const PREDEFINED_SUBJECTS = ['People', 'Product', 'Environment', 'Architecture', 'Food', 'Lifestyle'];
-const PREDEFINED_LIGHTING = ['Natural', 'Soft', 'Directional', 'High Contrast', 'Low Contrast', 'Dramatic', 'Ambient'];
-const PREDEFINED_COMPOSITION = ['Documentary', 'Minimal', 'Editorial', 'Spacious', 'Centered', 'Dynamic', 'Layered'];
-const PREDEFINED_COLOR_TREATMENTS = ['Natural', 'Muted', 'Vibrant', 'Warm', 'Cool', 'Monochromatic', 'Earthy', 'High Contrast'];
+const PREDEFINED_MOODS = ['Warm', 'Natural', 'Human', 'Calm', 'Editorial', 'Understated', 'Playful', 'Dramatic', 'Energetic'];
+const PREDEFINED_SUBJECTS = ['People', 'Product', 'Environment', 'Architecture', 'Lifestyle', 'Craft', 'Ritual'];
+const PREDEFINED_LIGHTING = ['Natural Daylight', 'Soft Ambient', 'Directional Sun', 'High Contrast', 'Warm Golden', 'Diffused'];
+const PREDEFINED_COLOR_TREATMENTS = ['Natural', 'Muted Earth', 'Warm Film', 'Monochromatic', 'Earthy', 'Low Saturation', 'True-to-Life'];
 
 export const ImageryEditor: React.FC<ImageryEditorProps> = ({
   data,
@@ -42,597 +43,399 @@ export const ImageryEditor: React.FC<ImageryEditorProps> = ({
     layoutNotes: { en: '', id: '' }
   };
 
-  // Convert legacy imageryDirection if imagery object is undefined
-  const getInitialImagery = (): ImageryData => {
-    if (current.imagery) {
-      return current.imagery;
-    }
-    const legacyText = getLocalizedText(current.imageryDirection, 'en').text;
-    if (legacyText) {
-      return {
-        photography: {
-          description: current.imageryDirection,
-          mood: ['Natural', 'Human'],
-          composition: ['Documentary']
-        }
-      };
-    }
-    return {};
-  };
+  const imageryData: ImageryData = current.imagery || {};
+  const directions: ImageryDirectionEntity[] = imageryData.directions || [];
+  const treatments: ImageTreatmentEntity[] = imageryData.treatments || [];
 
-  const imageryData = getInitialImagery();
-
-  // Modal / Form States
-  const [editingSection, setEditingSection] = useState<'photography' | 'artDirection' | 'characteristics' | null>(null);
-
-  // Temp Form States
-  const [photoDesc, setPhotoDesc] = useState(imageryData.photography?.description);
-  const [photoMood, setPhotoMood] = useState<string[]>(imageryData.photography?.mood || []);
-  const [photoSubjects, setPhotoSubjects] = useState<string[]>(imageryData.photography?.subjects || []);
-  const [photoLighting, setPhotoLighting] = useState<string[]>(imageryData.photography?.lighting || []);
-  const [photoComp, setPhotoComp] = useState<string[]>(imageryData.photography?.composition || []);
-  const [photoColor, setPhotoColor] = useState<string[]>(imageryData.photography?.colorTreatment || []);
-
-  const [artMood, setArtMood] = useState(imageryData.artDirection?.visualMood);
-  const [artSubject, setArtSubject] = useState(imageryData.artDirection?.subjectDirection);
-  const [artComp, setArtComp] = useState(imageryData.artDirection?.compositionDirection);
-  const [artTreatment, setArtTreatment] = useState(imageryData.artDirection?.treatment);
-
-  const [charMood, setCharMood] = useState<string[]>(imageryData.characteristics?.mood || []);
-  const [charLighting, setCharLighting] = useState<string[]>(imageryData.characteristics?.lighting || []);
-  const [charComp, setCharComp] = useState<string[]>(imageryData.characteristics?.composition || []);
-  const [charColor, setCharColor] = useState<string[]>(imageryData.characteristics?.color || []);
-
-  const updateImageryData = (updated: ImageryData) => {
-    // Sync summary text to legacy imageryDirection
-    const photoDescText = getLocalizedText(updated.photography?.description, 'en').text;
-    const artMoodText = getLocalizedText(updated.artDirection?.visualMood, 'en').text;
-    const summary = photoDescText || artMoodText || 'Imagery Direction defined';
-
+  const updateImagery = (partial: Partial<ImageryData>) => {
     onChange({
       ...current,
-      imagery: updated,
-      imageryDirection: updateLocalizedString(current.imageryDirection, contentLanguage, summary)
+      imagery: {
+        ...imageryData,
+        ...partial
+      }
     });
   };
 
-  const handleSavePhotography = (e: React.FormEvent) => {
-    e.preventDefault();
-    const updatedPhoto: PhotographyData = {
-      description: photoDesc,
-      mood: photoMood,
-      subjects: photoSubjects,
-      lighting: photoLighting,
-      composition: photoComp,
-      colorTreatment: photoColor
+  // --- Imagery Directions Handlers ---
+  const addDirection = () => {
+    const newDir: ImageryDirectionEntity = {
+      id: 'img-dir-' + Date.now(),
+      name: { en: '', id: '' },
+      category: 'photography',
+      description: { en: '', id: '' },
+      mood: [],
+      subjects: [],
+      lighting: [],
+      composition: [],
+      doGuidance: { en: '', id: '' },
+      dontGuidance: { en: '', id: '' }
     };
-    updateImageryData({ ...imageryData, photography: updatedPhoto });
-    setEditingSection(null);
+    updateImagery({ directions: [...directions, newDir] });
   };
 
-  const handleSaveArtDirection = (e: React.FormEvent) => {
-    e.preventDefault();
-    const updatedArt: ArtDirectionData = {
-      visualMood: artMood,
-      subjectDirection: artSubject,
-      compositionDirection: artComp,
-      treatment: artTreatment
+  const updateDirection = (id: string, key: keyof ImageryDirectionEntity, val: any) => {
+    const updated = directions.map((d) => {
+      if (d.id !== id) return d;
+      return { ...d, [key]: val };
+    });
+    updateImagery({ directions: updated });
+  };
+
+  const toggleDirectionTag = (id: string, listKey: 'mood' | 'subjects' | 'lighting', tag: string) => {
+    const targetDir = directions.find((d) => d.id === id);
+    if (!targetDir) return;
+    const currentList = targetDir[listKey] || [];
+    const updatedList = currentList.includes(tag)
+      ? currentList.filter((t) => t !== tag)
+      : [...currentList, tag];
+    updateDirection(id, listKey, updatedList);
+  };
+
+  const removeDirection = (id: string) => {
+    updateImagery({ directions: directions.filter((d) => d.id !== id) });
+  };
+
+  // --- Image Treatments Handlers ---
+  const addTreatment = () => {
+    const newTrm: ImageTreatmentEntity = {
+      id: 'img-trm-' + Date.now(),
+      name: { en: '', id: '' },
+      description: { en: '', id: '' },
+      colorTreatment: [],
+      filterNotes: { en: '', id: '' }
     };
-    updateImageryData({ ...imageryData, artDirection: updatedArt });
-    setEditingSection(null);
+    updateImagery({ treatments: [...treatments, newTrm] });
   };
 
-  const handleSaveCharacteristics = (e: React.FormEvent) => {
-    e.preventDefault();
-    const updatedChar: ImageCharacteristicsData = {
-      mood: charMood,
-      lighting: charLighting,
-      composition: charComp,
-      color: charColor
-    };
-    updateImageryData({ ...imageryData, characteristics: updatedChar });
-    setEditingSection(null);
+  const updateTreatment = (id: string, key: keyof ImageTreatmentEntity, val: any) => {
+    const updated = treatments.map((trm) => {
+      if (trm.id !== id) return trm;
+      return { ...trm, [key]: val };
+    });
+    updateImagery({ treatments: updated });
   };
 
-  const toggleTag = (list: string[], setList: (updated: string[]) => void, item: string) => {
-    if (list.includes(item)) {
-      setList(list.filter((i) => i !== item));
-    } else {
-      setList([...list, item]);
-    }
+  const toggleTreatmentTag = (id: string, tag: string) => {
+    const targetTrm = treatments.find((t) => t.id === id);
+    if (!targetTrm) return;
+    const currentList = targetTrm.colorTreatment || [];
+    const updatedList = currentList.includes(tag)
+      ? currentList.filter((t) => t !== tag)
+      : [...currentList, tag];
+    updateTreatment(id, 'colorTreatment', updatedList);
   };
 
-  const photography = imageryData.photography;
-  const artDirection = imageryData.artDirection;
-  const characteristics = imageryData.characteristics;
-
-  const hasPhotography = photography && (
-    getLocalizedText(photography.description, 'en').text ||
-    (photography.mood && photography.mood.length > 0) ||
-    (photography.subjects && photography.subjects.length > 0) ||
-    (photography.lighting && photography.lighting.length > 0) ||
-    (photography.composition && photography.composition.length > 0) ||
-    (photography.colorTreatment && photography.colorTreatment.length > 0)
-  );
-
-  const hasArtDirection = artDirection && (
-    getLocalizedText(artDirection.visualMood, 'en').text ||
-    getLocalizedText(artDirection.subjectDirection, 'en').text ||
-    getLocalizedText(artDirection.compositionDirection, 'en').text ||
-    getLocalizedText(artDirection.treatment, 'en').text
-  );
-
-  const hasCharacteristics = characteristics && (
-    (characteristics.mood && characteristics.mood.length > 0) ||
-    (characteristics.lighting && characteristics.lighting.length > 0) ||
-    (characteristics.composition && characteristics.composition.length > 0) ||
-    (characteristics.color && characteristics.color.length > 0)
-  );
+  const removeTreatment = (id: string) => {
+    updateImagery({ treatments: treatments.filter((trm) => trm.id !== id) });
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Editor Header */}
-      <div className="editor-card" style={{ padding: '24px' }}>
-        <h2 className="editor-title" style={{ fontSize: '1.25rem', fontWeight: 700 }}>
-          {t('imageryTitle', uiLanguage)}
-        </h2>
-        <p className="editor-subtitle" style={{ marginTop: '2px' }}>
-          {t('imagerySubtitle', uiLanguage)}
-        </p>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 1. PHOTOGRAPHY SECTION */}
-      {/* ========================================================================= */}
-      <div className="editor-card" style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Camera size={20} style={{ color: 'var(--accent-primary)' }} />
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>
-              {t('photographySectionTitle', uiLanguage)}
-            </h3>
+      {/* 1. Imagery Directions (Entities) */}
+      <div className="editor-card">
+        <div className="editor-header">
+          <div>
+            <h2 className="editor-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Camera size={20} color="var(--accent-primary)" />
+              {t('imageryDirectionsTitle', uiLanguage)}
+            </h2>
+            <p className="editor-subtitle">{t('imageryDirectionsSubtitle', uiLanguage)}</p>
           </div>
-
-          <button
-            className="btn btn-secondary btn-sm"
-            onClick={() => {
-              setPhotoDesc(photography?.description);
-              setPhotoMood(photography?.mood || []);
-              setPhotoSubjects(photography?.subjects || []);
-              setPhotoLighting(photography?.lighting || []);
-              setPhotoComp(photography?.composition || []);
-              setPhotoColor(photography?.colorTreatment || []);
-              setEditingSection('photography');
-            }}
-          >
-            {hasPhotography ? <Edit2 size={14} /> : <Plus size={14} />}
-            {hasPhotography ? t('edit', uiLanguage) : t('definePhotography', uiLanguage)}
+          <button className="btn-action-primary" onClick={addDirection}>
+            <Plus size={16} /> {t('addImageryDirection', uiLanguage)}
           </button>
         </div>
 
-        {editingSection === 'photography' ? (
-          <form onSubmit={handleSavePhotography} style={{ display: 'flex', flexDirection: 'column', gap: '18px', borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
-            <LocalizedTextarea
-              label={t('photographyDescLabel', uiLanguage)}
-              placeholder={t('photographyDescPlaceholder', uiLanguage)}
-              rows={3}
-              value={photoDesc}
-              contentLanguage={contentLanguage}
-              onChange={setPhotoDesc}
-            />
-
-            <div>
-              <label className="form-label" style={{ fontWeight: 600 }}>{t('photographyMoodLabel', uiLanguage)}</label>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
-                {PREDEFINED_MOODS.map((item) => {
-                  const isSelected = photoMood.includes(item);
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => toggleTag(photoMood, setPhotoMood, item)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: 'var(--radius-sm)',
-                        border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-light)',
-                        backgroundColor: isSelected ? 'var(--accent-light)' : 'var(--bg-card)',
-                        fontSize: '0.8rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      {isSelected && <Check size={12} />} {item}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <label className="form-label" style={{ fontWeight: 600 }}>{t('photographySubjectLabel', uiLanguage)}</label>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
-                {PREDEFINED_SUBJECTS.map((item) => {
-                  const isSelected = photoSubjects.includes(item);
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => toggleTag(photoSubjects, setPhotoSubjects, item)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: 'var(--radius-sm)',
-                        border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-light)',
-                        backgroundColor: isSelected ? 'var(--accent-light)' : 'var(--bg-card)',
-                        fontSize: '0.8rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      {isSelected && <Check size={12} />} {item}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <label className="form-label" style={{ fontWeight: 600 }}>{t('photographyLightingLabel', uiLanguage)}</label>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
-                {PREDEFINED_LIGHTING.map((item) => {
-                  const isSelected = photoLighting.includes(item);
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => toggleTag(photoLighting, setPhotoLighting, item)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: 'var(--radius-sm)',
-                        border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-light)',
-                        backgroundColor: isSelected ? 'var(--accent-light)' : 'var(--bg-card)',
-                        fontSize: '0.8rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      {isSelected && <Check size={12} />} {item}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <label className="form-label" style={{ fontWeight: 600 }}>{t('photographyCompositionLabel', uiLanguage)}</label>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
-                {PREDEFINED_COMPOSITION.map((item) => {
-                  const isSelected = photoComp.includes(item);
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => toggleTag(photoComp, setPhotoComp, item)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: 'var(--radius-sm)',
-                        border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-light)',
-                        backgroundColor: isSelected ? 'var(--accent-light)' : 'var(--bg-card)',
-                        fontSize: '0.8rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      {isSelected && <Check size={12} />} {item}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <label className="form-label" style={{ fontWeight: 600 }}>{t('photographyColorTreatmentLabel', uiLanguage)}</label>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
-                {PREDEFINED_COLOR_TREATMENTS.map((item) => {
-                  const isSelected = photoColor.includes(item);
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => toggleTag(photoColor, setPhotoColor, item)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: 'var(--radius-sm)',
-                        border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-light)',
-                        backgroundColor: isSelected ? 'var(--accent-light)' : 'var(--bg-card)',
-                        fontSize: '0.8rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      {isSelected && <Check size={12} />} {item}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '8px' }}>
-              <button type="button" className="btn btn-secondary btn-sm" onClick={() => setEditingSection(null)}>
-                {t('cancel', uiLanguage)}
-              </button>
-              <button type="submit" className="btn btn-accent btn-sm">
-                {t('save', uiLanguage)}
-              </button>
-            </div>
-          </form>
-        ) : hasPhotography ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {getLocalizedText(photography.description, contentLanguage).text && (
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
-                {getLocalizedText(photography.description, contentLanguage).text}
-              </p>
-            )}
-
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' }}>
-              {[
-                ...(photography.mood || []),
-                ...(photography.subjects || []),
-                ...(photography.lighting || []),
-                ...(photography.composition || []),
-                ...(photography.colorTreatment || [])
-              ].map((tag, idx) => (
-                <span key={idx} className="badge badge-secondary" style={{ fontSize: '0.78rem' }}>
-                  {tag}
-                </span>
-              ))}
-            </div>
+        {directions.length === 0 ? (
+          <div style={{ padding: '24px', textAlign: 'center', color: '#64748b', backgroundColor: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px dashed var(--border-light)' }}>
+            {t('noImageryDirectionsEmpty', uiLanguage)}
           </div>
         ) : (
-          <div style={{ padding: '16px 0', textAlign: 'center', color: 'var(--text-subtle)', fontSize: '0.88rem' }}>
-            {t('noPhotographyTitle', uiLanguage)}
-          </div>
-        )}
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 2. ART DIRECTION SECTION */}
-      {/* ========================================================================= */}
-      <div className="editor-card" style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Palette size={20} style={{ color: 'var(--accent-primary)' }} />
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>
-              {t('artDirectionSectionTitle', uiLanguage)}
-            </h3>
-          </div>
-
-          <button
-            className="btn btn-secondary btn-sm"
-            onClick={() => {
-              setArtMood(artDirection?.visualMood);
-              setArtSubject(artDirection?.subjectDirection);
-              setArtComp(artDirection?.compositionDirection);
-              setArtTreatment(artDirection?.treatment);
-              setEditingSection('artDirection');
-            }}
-          >
-            {hasArtDirection ? <Edit2 size={14} /> : <Plus size={14} />}
-            {hasArtDirection ? t('edit', uiLanguage) : t('defineArtDirection', uiLanguage)}
-          </button>
-        </div>
-
-        {editingSection === 'artDirection' ? (
-          <form onSubmit={handleSaveArtDirection} style={{ display: 'flex', flexDirection: 'column', gap: '16px', borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
-            <LocalizedInput
-              label={t('artDirectionVisualMoodLabel', uiLanguage)}
-              placeholder={t('artDirectionVisualMoodPlaceholder', uiLanguage)}
-              value={artMood}
-              contentLanguage={contentLanguage}
-              onChange={setArtMood}
-            />
-
-            <LocalizedInput
-              label={t('artDirectionSubjectLabel', uiLanguage)}
-              placeholder={t('artDirectionSubjectPlaceholder', uiLanguage)}
-              value={artSubject}
-              contentLanguage={contentLanguage}
-              onChange={setArtSubject}
-            />
-
-            <LocalizedInput
-              label={t('artDirectionCompositionLabel', uiLanguage)}
-              placeholder={t('artDirectionCompositionPlaceholder', uiLanguage)}
-              value={artComp}
-              contentLanguage={contentLanguage}
-              onChange={setArtComp}
-            />
-
-            <LocalizedInput
-              label={t('artDirectionTreatmentLabel', uiLanguage)}
-              placeholder={t('artDirectionTreatmentPlaceholder', uiLanguage)}
-              value={artTreatment}
-              contentLanguage={contentLanguage}
-              onChange={setArtTreatment}
-            />
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '8px' }}>
-              <button type="button" className="btn btn-secondary btn-sm" onClick={() => setEditingSection(null)}>
-                {t('cancel', uiLanguage)}
-              </button>
-              <button type="submit" className="btn btn-accent btn-sm">
-                {t('save', uiLanguage)}
-              </button>
-            </div>
-          </form>
-        ) : hasArtDirection ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
-            {getLocalizedText(artDirection.visualMood, contentLanguage).text && (
-              <div style={{ padding: '12px', backgroundColor: 'var(--bg-muted)', borderRadius: 'var(--radius-md)' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                  {t('artDirectionVisualMoodLabel', uiLanguage)}
-                </div>
-                <div style={{ fontSize: '0.9rem', color: 'var(--text-main)', marginTop: '4px' }}>
-                  {getLocalizedText(artDirection.visualMood, contentLanguage).text}
-                </div>
-              </div>
-            )}
-
-            {getLocalizedText(artDirection.subjectDirection, contentLanguage).text && (
-              <div style={{ padding: '12px', backgroundColor: 'var(--bg-muted)', borderRadius: 'var(--radius-md)' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                  {t('artDirectionSubjectLabel', uiLanguage)}
-                </div>
-                <div style={{ fontSize: '0.9rem', color: 'var(--text-main)', marginTop: '4px' }}>
-                  {getLocalizedText(artDirection.subjectDirection, contentLanguage).text}
-                </div>
-              </div>
-            )}
-
-            {getLocalizedText(artDirection.compositionDirection, contentLanguage).text && (
-              <div style={{ padding: '12px', backgroundColor: 'var(--bg-muted)', borderRadius: 'var(--radius-md)' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                  {t('artDirectionCompositionLabel', uiLanguage)}
-                </div>
-                <div style={{ fontSize: '0.9rem', color: 'var(--text-main)', marginTop: '4px' }}>
-                  {getLocalizedText(artDirection.compositionDirection, contentLanguage).text}
-                </div>
-              </div>
-            )}
-
-            {getLocalizedText(artDirection.treatment, contentLanguage).text && (
-              <div style={{ padding: '12px', backgroundColor: 'var(--bg-muted)', borderRadius: 'var(--radius-md)' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                  {t('artDirectionTreatmentLabel', uiLanguage)}
-                </div>
-                <div style={{ fontSize: '0.9rem', color: 'var(--text-main)', marginTop: '4px' }}>
-                  {getLocalizedText(artDirection.treatment, contentLanguage).text}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div style={{ padding: '16px 0', textAlign: 'center', color: 'var(--text-subtle)', fontSize: '0.88rem' }}>
-            {t('noArtDirectionTitle', uiLanguage)}
-          </div>
-        )}
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 3. IMAGE CHARACTERISTICS SECTION */}
-      {/* ========================================================================= */}
-      <div className="editor-card" style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Sliders size={20} style={{ color: 'var(--accent-primary)' }} />
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>
-              {t('characteristicsSectionTitle', uiLanguage)}
-            </h3>
-          </div>
-
-          <button
-            className="btn btn-secondary btn-sm"
-            onClick={() => {
-              setCharMood(characteristics?.mood || []);
-              setCharLighting(characteristics?.lighting || []);
-              setCharComp(characteristics?.composition || []);
-              setCharColor(characteristics?.color || []);
-              setEditingSection('characteristics');
-            }}
-          >
-            {hasCharacteristics ? <Edit2 size={14} /> : <Plus size={14} />}
-            {hasCharacteristics ? t('edit', uiLanguage) : t('addCharacteristics', uiLanguage)}
-          </button>
-        </div>
-
-        {editingSection === 'characteristics' ? (
-          <form onSubmit={handleSaveCharacteristics} style={{ display: 'flex', flexDirection: 'column', gap: '16px', borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
-            <div>
-              <label className="form-label" style={{ fontWeight: 600 }}>Mood Characteristics</label>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
-                {PREDEFINED_MOODS.map((item) => {
-                  const isSelected = charMood.includes(item);
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => toggleTag(charMood, setCharMood, item)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: 'var(--radius-sm)',
-                        border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-light)',
-                        backgroundColor: isSelected ? 'var(--accent-light)' : 'var(--bg-card)',
-                        fontSize: '0.8rem',
-                        cursor: 'pointer'
-                      }}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {directions.map((dir) => (
+              <div
+                key={dir.id}
+                style={{
+                  border: '1px solid var(--border-light)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '20px',
+                  backgroundColor: '#ffffff'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
+                  <div style={{ flex: 1, marginRight: '16px' }}>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      {t('imageryStyleName', uiLanguage)}
+                    </label>
+                    <LocalizedInput
+                      value={dir.name}
+                      contentLanguage={contentLanguage}
+                      placeholder={t('imageryStyleNamePlaceholder', uiLanguage)}
+                      onChange={(val) => updateDirection(dir.id, 'name', val)}
+                    />
+                  </div>
+                  <div style={{ width: '160px', marginRight: '12px' }}>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      {t('categoryLabel', uiLanguage)}
+                    </label>
+                    <select
+                      value={dir.category || 'photography'}
+                      onChange={(e) => updateDirection(dir.id, 'category', e.target.value)}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)', fontSize: '0.85rem' }}
                     >
-                      {item}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+                      <option value="photography">Photography</option>
+                      <option value="editorial">Editorial</option>
+                      <option value="product">Product</option>
+                      <option value="lifestyle">Lifestyle</option>
+                      <option value="abstract">Abstract</option>
+                    </select>
+                  </div>
+                  <button
+                    onClick={() => removeDirection(dir.id)}
+                    style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '6px', marginTop: '18px' }}
+                    title={t('removeDirection', uiLanguage)}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
 
-            <div>
-              <label className="form-label" style={{ fontWeight: 600 }}>Lighting & Color Qualities</label>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
-                {[...PREDEFINED_LIGHTING, ...PREDEFINED_COLOR_TREATMENTS].map((item) => {
-                  const isSelected = charLighting.includes(item) || charColor.includes(item);
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => toggleTag(charLighting, setCharLighting, item)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: 'var(--radius-sm)',
-                        border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-light)',
-                        backgroundColor: isSelected ? 'var(--accent-light)' : 'var(--bg-card)',
-                        fontSize: '0.8rem',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {item}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                    {t('imageryDescription', uiLanguage)}
+                  </label>
+                  <LocalizedTextarea
+                    value={dir.description}
+                    contentLanguage={contentLanguage}
+                    rows={2}
+                    placeholder={t('imageryDescriptionPlaceholder', uiLanguage)}
+                    onChange={(val) => updateDirection(dir.id, 'description', val)}
+                  />
+                </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '8px' }}>
-              <button type="button" className="btn btn-secondary btn-sm" onClick={() => setEditingSection(null)}>
-                {t('cancel', uiLanguage)}
-              </button>
-              <button type="submit" className="btn btn-accent btn-sm">
-                {t('save', uiLanguage)}
-              </button>
-            </div>
-          </form>
-        ) : hasCharacteristics ? (
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {[
-              ...(characteristics.mood || []),
-              ...(characteristics.lighting || []),
-              ...(characteristics.composition || []),
-              ...(characteristics.color || [])
-            ].map((tag, idx) => (
-              <span key={idx} className="badge badge-outline" style={{ fontSize: '0.82rem', padding: '6px 12px' }}>
-                {tag}
-              </span>
+                {/* Mood Chips */}
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', marginBottom: '6px' }}>
+                    {t('moodTagsLabel', uiLanguage)}
+                  </label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {PREDEFINED_MOODS.map((m) => {
+                      const isSelected = dir.mood?.includes(m);
+                      return (
+                        <button
+                          key={m}
+                          type="button"
+                          onClick={() => toggleDirectionTag(dir.id, 'mood', m)}
+                          style={{
+                            border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-light)',
+                            backgroundColor: isSelected ? 'var(--accent-light)' : '#f8fafc',
+                            color: isSelected ? 'var(--accent-primary)' : '#475569',
+                            borderRadius: '4px',
+                            padding: '4px 10px',
+                            fontSize: '0.76rem',
+                            cursor: 'pointer',
+                            fontWeight: isSelected ? 600 : 400
+                          }}
+                        >
+                          {m}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Subjects & Lighting Chips */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', marginBottom: '6px' }}>
+                      {t('subjectTagsLabel', uiLanguage)}
+                    </label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {PREDEFINED_SUBJECTS.map((s) => {
+                        const isSelected = dir.subjects?.includes(s);
+                        return (
+                          <button
+                            key={s}
+                            type="button"
+                            onClick={() => toggleDirectionTag(dir.id, 'subjects', s)}
+                            style={{
+                              border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-light)',
+                              backgroundColor: isSelected ? 'var(--accent-light)' : '#f8fafc',
+                              color: isSelected ? 'var(--accent-primary)' : '#475569',
+                              borderRadius: '4px',
+                              padding: '3px 8px',
+                              fontSize: '0.72rem',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 600 : 400
+                            }}
+                          >
+                            {s}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', marginBottom: '6px' }}>
+                      {t('lightingTagsLabel', uiLanguage)}
+                    </label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {PREDEFINED_LIGHTING.map((l) => {
+                        const isSelected = dir.lighting?.includes(l);
+                        return (
+                          <button
+                            key={l}
+                            type="button"
+                            onClick={() => toggleDirectionTag(dir.id, 'lighting', l)}
+                            style={{
+                              border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-light)',
+                              backgroundColor: isSelected ? 'var(--accent-light)' : '#f8fafc',
+                              color: isSelected ? 'var(--accent-primary)' : '#475569',
+                              borderRadius: '4px',
+                              padding: '3px 8px',
+                              fontSize: '0.72rem',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 600 : 400
+                            }}
+                          >
+                            {l}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Do / Don't Guidance */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#16a34a', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      ✓ {t('imageryDoGuidance', uiLanguage)}
+                    </label>
+                    <LocalizedTextarea
+                      value={dir.doGuidance}
+                      contentLanguage={contentLanguage}
+                      rows={2}
+                      placeholder={t('imageryDoGuidancePlaceholder', uiLanguage)}
+                      onChange={(val) => updateDirection(dir.id, 'doGuidance', val)}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#dc2626', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      ✕ {t('imageryDontGuidance', uiLanguage)}
+                    </label>
+                    <LocalizedTextarea
+                      value={dir.dontGuidance}
+                      contentLanguage={contentLanguage}
+                      rows={2}
+                      placeholder={t('imageryDontGuidancePlaceholder', uiLanguage)}
+                      onChange={(val) => updateDirection(dir.id, 'dontGuidance', val)}
+                    />
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
+        )}
+      </div>
+
+      {/* 2. Image Treatments (Entities) */}
+      <div className="editor-card">
+        <div className="editor-header">
+          <div>
+            <h2 className="editor-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Palette size={20} color="var(--accent-primary)" />
+              {t('imageTreatmentsTitle', uiLanguage)}
+            </h2>
+            <p className="editor-subtitle">{t('imageTreatmentsSubtitle', uiLanguage)}</p>
+          </div>
+          <button className="btn-action-primary" onClick={addTreatment}>
+            <Plus size={16} /> {t('addImageTreatment', uiLanguage)}
+          </button>
+        </div>
+
+        {treatments.length === 0 ? (
+          <div style={{ padding: '24px', textAlign: 'center', color: '#64748b', backgroundColor: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px dashed var(--border-light)' }}>
+            {t('noImageTreatmentsEmpty', uiLanguage)}
+          </div>
         ) : (
-          <div style={{ padding: '16px 0', textAlign: 'center', color: 'var(--text-subtle)', fontSize: '0.88rem' }}>
-            {t('noCharacteristicsTitle', uiLanguage)}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {treatments.map((trm) => (
+              <div
+                key={trm.id}
+                style={{
+                  border: '1px solid var(--border-light)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '16px',
+                  backgroundColor: '#ffffff'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                  <div style={{ flex: 1, marginRight: '16px' }}>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      {t('treatmentName', uiLanguage)}
+                    </label>
+                    <LocalizedInput
+                      value={trm.name}
+                      contentLanguage={contentLanguage}
+                      placeholder={t('treatmentNamePlaceholder', uiLanguage)}
+                      onChange={(val) => updateTreatment(trm.id, 'name', val)}
+                    />
+                  </div>
+                  <button
+                    onClick={() => removeTreatment(trm.id)}
+                    style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '6px', marginTop: '18px' }}
+                    title={t('removeTreatment', uiLanguage)}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                    {t('treatmentDescription', uiLanguage)}
+                  </label>
+                  <LocalizedTextarea
+                    value={trm.description}
+                    contentLanguage={contentLanguage}
+                    rows={2}
+                    placeholder={t('treatmentDescriptionPlaceholder', uiLanguage)}
+                    onChange={(val) => updateTreatment(trm.id, 'description', val)}
+                  />
+                </div>
+
+                {/* Color Treatment Chips */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', marginBottom: '6px' }}>
+                    {t('colorTreatmentTags', uiLanguage)}
+                  </label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {PREDEFINED_COLOR_TREATMENTS.map((c) => {
+                      const isSelected = trm.colorTreatment?.includes(c);
+                      return (
+                        <button
+                          key={c}
+                          type="button"
+                          onClick={() => toggleTreatmentTag(trm.id, c)}
+                          style={{
+                            border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-light)',
+                            backgroundColor: isSelected ? 'var(--accent-light)' : '#f8fafc',
+                            color: isSelected ? 'var(--accent-primary)' : '#475569',
+                            borderRadius: '4px',
+                            padding: '3px 8px',
+                            fontSize: '0.74rem',
+                            cursor: 'pointer',
+                            fontWeight: isSelected ? 600 : 400
+                          }}
+                        >
+                          {c}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

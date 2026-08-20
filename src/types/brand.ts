@@ -77,9 +77,13 @@ export type EntityType =
   | 'color'
   | 'font'
   | 'typeStyle'
-  | 'imageryDirection'
-  | 'graphicLanguage'
+  | 'gridSystem'
   | 'layoutPrinciple'
+  | 'imageryDirection'
+  | 'imageTreatment'
+  | 'graphicElement'
+  | 'illustrationStyle'
+  | 'iconSystem'
   // Visual Assets & Rules
   | 'asset'
   | 'rule';
@@ -248,6 +252,89 @@ export interface TypeStyleItem {
   updatedAt?: string;
 }
 
+// --- Deepened Visual Knowledge Entities ---
+
+export interface ImageryDirectionEntity {
+  id: string;
+  name: LocalizedString;
+  category?: 'photography' | 'editorial' | 'product' | 'lifestyle' | 'abstract';
+  description: LocalizedString;
+  mood?: string[];
+  subjects?: string[];
+  lighting?: string[];
+  composition?: string[];
+  doGuidance?: LocalizedString;
+  dontGuidance?: LocalizedString;
+  updatedAt?: string;
+}
+
+export interface ImageTreatmentEntity {
+  id: string;
+  name: LocalizedString;
+  description: LocalizedString;
+  colorTreatment?: string[];
+  filterNotes?: LocalizedString;
+  updatedAt?: string;
+}
+
+export interface GraphicElementEntity {
+  id: string;
+  name: LocalizedString;
+  category: 'shape' | 'pattern' | 'decorative' | 'line';
+  description: LocalizedString;
+  characteristics?: string[];
+  usageNotes?: LocalizedString;
+  updatedAt?: string;
+}
+
+export interface IllustrationStyleEntity {
+  id: string;
+  name: LocalizedString;
+  style: string[];
+  subjects?: string[];
+  description: LocalizedString;
+  treatment?: LocalizedString;
+  updatedAt?: string;
+}
+
+export interface IconographySystemEntity {
+  id: string;
+  name: LocalizedString;
+  style: string[];
+  gridSizePx?: number;
+  strokeWidthPx?: number;
+  description: LocalizedString;
+  cornerTreatment?: 'sharp' | 'rounded' | 'chamfered';
+  updatedAt?: string;
+}
+
+export interface GridSystemEntity {
+  id: string;
+  name: LocalizedString;
+  type: 'column' | 'modular' | 'baseline' | 'freeform' | 'custom';
+  columns?: number;
+  gutterPx?: number;
+  marginPx?: number;
+  contextChannel?: string;
+  description?: LocalizedString;
+  updatedAt?: string;
+}
+
+export interface LayoutPrincipleEntity {
+  id: string;
+  title: LocalizedString;
+  category: 'alignment' | 'proportion' | 'hierarchy' | 'composition';
+  description: LocalizedString;
+  guidance?: LocalizedString;
+  updatedAt?: string;
+}
+
+export interface SpacingScaleData {
+  baseUnitPx?: number;
+  scaleSteps?: number[];
+  description?: LocalizedString;
+}
+
 export interface PhotographyData {
   description?: LocalizedString;
   mood?: string[];
@@ -275,6 +362,8 @@ export interface ImageryData {
   photography?: PhotographyData;
   artDirection?: ArtDirectionData;
   characteristics?: ImageCharacteristicsData;
+  directions?: ImageryDirectionEntity[];
+  treatments?: ImageTreatmentEntity[];
 }
 
 export interface GraphicCategoryData {
@@ -295,6 +384,9 @@ export interface GraphicLanguageData {
   iconography?: GraphicCategoryData;
   lines?: GraphicCategoryData;
   decorativeElements?: GraphicCategoryData;
+  elements?: GraphicElementEntity[];
+  illustrationStyles?: IllustrationStyleEntity[];
+  iconSystems?: IconographySystemEntity[];
 }
 
 export interface GridData {
@@ -330,6 +422,9 @@ export interface LayoutCompositionData {
   proportion?: LayoutCategoryData;
   hierarchy?: LayoutCategoryData;
   compositionPrinciples?: LayoutCategoryData;
+  gridSystems?: GridSystemEntity[];
+  layoutPrinciples?: LayoutPrincipleEntity[];
+  spacingScale?: SpacingScaleData;
 }
 
 export type AssetCategory =

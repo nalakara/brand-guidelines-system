@@ -135,6 +135,8 @@ export const sampleBrand: Brand = {
     'personality',
     'voiceTone',
     'visualBasics',
+    'visualAssets',
+    'visualRules',
     'messaging'
   ],
   modules: {
@@ -476,6 +478,59 @@ export const sampleBrand: Brand = {
         id: 'Wordmark utama menggunakan jenis huruf serif berlekuk. Berikan ruang kosong yang cukup di sekeliling logo. Jangan miringkan atau beri bayangan.'
       },
       logoVariants: defaultLogoVariants,
+      logos: [
+        {
+          id: 'logo-primary',
+          name: 'Northstar Primary Wordmark',
+          type: 'primaryLogo',
+          role: 'primary',
+          description: {
+            en: 'Custom flared serif wordmark evoking timeless craftsmanship and warmth.',
+            id: 'Wordmark serif berlekuk khas yang menghadirkan kehangatan dan kriya abadi.'
+          },
+          structure: {
+            hasSymbol: true,
+            hasWordmark: true,
+            composition: { en: 'Emblem centered or left-aligned with serif logotype', id: 'Simbol di tengah atau rata kiri dengan logotype serif' }
+          },
+          variants: [
+            {
+              id: 'var-fullcolor',
+              name: { en: 'Full Color Espresso', id: 'Warna Penuh Espresso' },
+              colorType: 'fullColor',
+              usageNotes: { en: 'Primary branding on Warm Parchment (#f7f4ef) backgrounds.', id: 'Branding utama pada latar Warm Parchment (#f7f4ef).' }
+            },
+            {
+              id: 'var-white',
+              name: { en: 'Reversed Pure White', id: 'Putih Murni Terbalik' },
+              colorType: 'reversed',
+              usageNotes: { en: 'For dark Espresso Earth (#2d241e) packaging and merchandise.', id: 'Untuk kemasan gelap Espresso Earth (#2d241e) dan merchandise.' }
+            }
+          ]
+        },
+        {
+          id: 'logo-emblem',
+          name: 'Northstar Compass Star Emblem',
+          type: 'symbolMark',
+          role: 'secondary',
+          description: {
+            en: 'Geometric 8-point compass star symbol used as stamp, packaging seal, and app favicon.',
+            id: 'Simbol bintang kompas 8 titik geometris sebagai stempel, segel kemasan, dan favicon aplikasi.'
+          },
+          structure: {
+            hasSymbol: true,
+            hasWordmark: false
+          },
+          variants: [
+            {
+              id: 'var-emblem-solid',
+              name: { en: 'Amber Gold Emblem', id: 'Simbol Emas Amber' },
+              colorType: 'fullColor',
+              usageNotes: { en: 'Wax seals, foil stamping, and app icons.', id: 'Segel lilin, cetak foil emas, dan ikon aplikasi.' }
+            }
+          ]
+        }
+      ],
       primaryColors: [
         {
           id: 'c-1',
@@ -496,10 +551,118 @@ export const sampleBrand: Brand = {
           usage: { en: 'Accent highlights & badge borders', id: 'Aksen penyorot & bingkai lencana' }
         }
       ],
-      secondaryColors: [],
+      secondaryColors: [
+        {
+          id: 'c-4',
+          name: { en: 'Sage Canopy', id: 'Sage Canopy (Hijau Sage)' },
+          hex: '#607274',
+          usage: { en: 'Packaging tags & plant accent details', id: 'Label kemasan & detail aksen botani' }
+        },
+        {
+          id: 'c-5',
+          name: { en: 'Oat Cream', id: 'Oat Cream (Krem Gandum)' },
+          hex: '#e3dcce',
+          usage: { en: 'Subtle container borders and card fills', id: 'Bingkai kontainer halus dan latar kartu' }
+        }
+      ],
+      colors: [
+        {
+          id: 'col-1',
+          name: 'Espresso Earth',
+          role: 'primary',
+          hex: '#2d241e',
+          rgb: 'rgb(45, 36, 30)',
+          hsl: 'hsl(24, 20%, 15%)',
+          cmyk: 'cmyk(0%, 20%, 33%, 82%)',
+          description: { en: 'Deep, rich roasted tone for high-contrast typography.', id: 'Warna sangrai pekat untuk keterbacaan teks kontras tinggi.' }
+        },
+        {
+          id: 'col-2',
+          name: 'Warm Parchment',
+          role: 'primary',
+          hex: '#f7f4ef',
+          rgb: 'rgb(247, 244, 239)',
+          hsl: 'hsl(38, 27%, 95%)',
+          cmyk: 'cmyk(0%, 1%, 3%, 3%)',
+          description: { en: 'Gentle, soothing foundation tone that replaces sterile pure white.', id: 'Warna dasar lembut yang menggantikan putih murni kaku.' }
+        },
+        {
+          id: 'col-3',
+          name: 'Amber Glow',
+          role: 'accent',
+          hex: '#d97706',
+          rgb: 'rgb(217, 119, 6)',
+          hsl: 'hsl(32, 95%, 44%)',
+          cmyk: 'cmyk(0%, 45%, 97%, 15%)',
+          description: { en: 'Warm morning light highlight tone.', id: 'Warna sorotan cahaya pagi yang hangat.' }
+        },
+        {
+          id: 'col-4',
+          name: 'Sage Canopy',
+          role: 'secondary',
+          hex: '#607274',
+          rgb: 'rgb(96, 114, 116)',
+          hsl: 'hsl(186, 9%, 42%)',
+          cmyk: 'cmyk(17%, 2%, 0%, 55%)',
+          description: { en: 'Botanical coffee farm shade.', id: 'Warna keteduhan kebun kopi botani.' }
+        }
+      ],
+      fonts: [
+        {
+          id: 'font-fraunces',
+          name: 'Fraunces',
+          role: 'primary',
+          weights: [400, 600, 700],
+          styles: ['normal', 'italic'],
+          updatedAt: '2026-08-18T10:00:00.000Z'
+        },
+        {
+          id: 'font-inter',
+          name: 'Inter',
+          role: 'secondary',
+          weights: [400, 500, 600],
+          styles: ['normal'],
+          updatedAt: '2026-08-18T10:00:00.000Z'
+        }
+      ],
+      typeStyles: [
+        {
+          id: 'ts-display-1',
+          name: 'Display Large',
+          category: 'display',
+          fontFamilyId: 'font-fraunces',
+          weight: 700,
+          sizePx: 48,
+          lineHeight: 1.15,
+          letterSpacingEm: -0.02,
+          sampleText: { en: 'Grounded Mornings.', id: 'Pagi yang Tenang.' }
+        },
+        {
+          id: 'ts-heading-1',
+          name: 'Heading 1',
+          category: 'heading',
+          fontFamilyId: 'font-fraunces',
+          weight: 600,
+          sizePx: 32,
+          lineHeight: 1.25,
+          letterSpacingEm: -0.01,
+          sampleText: { en: 'Our Sourcing Ethics', id: 'Etika Pengadaan Kami' }
+        },
+        {
+          id: 'ts-body-1',
+          name: 'Body Regular',
+          category: 'body',
+          fontFamilyId: 'font-inter',
+          weight: 400,
+          sizePx: 16,
+          lineHeight: 1.6,
+          letterSpacingEm: 0,
+          sampleText: { en: 'We craft unhurried coffee for intentional daily pauses.', id: 'Kami menyeduh kopi berkualitas untuk jeda harian Anda.' }
+        }
+      ],
       typographyNotes: {
-        en: 'Typography balances heritage craftsmanship with modern readability.',
-        id: 'Tipografi menyeimbangkan kriya warisan dengan keterbacaan modern.'
+        en: 'Typography balances heritage craftsmanship with modern readability. Headlines use Fraunces (warm flared serif), while body copy utilizes Inter (clean, highly legible grotesque).',
+        id: 'Tipografi menyeimbangkan kriya warisan dengan keterbacaan modern. Judul menggunakan Fraunces (serif berlekuk hangat), sedangkan isi teks menggunakan Inter (sans-serif bersih).'
       },
       imageryDirection: {
         en: 'Natural daylight, documentary angles, authentic cafe textures, and unposed moments.',
@@ -508,8 +671,254 @@ export const sampleBrand: Brand = {
       layoutNotes: {
         en: 'Generous whitespace, structured grid, intentional focal points.',
         id: 'Ruang kosong yang lapang, grid terstruktur, dan titik fokus yang jelas.'
+      },
+      layoutComposition: {
+        gridSystems: [
+          {
+            id: 'grid-1',
+            name: { en: '12-Column Desktop Grid', id: 'Grid Desktop 12-Kolom' },
+            type: 'column',
+            columns: 12,
+            gutterPx: 24,
+            marginPx: 64,
+            contextChannel: 'Website & Digital Layouts',
+            description: { en: 'Primary layout grid for marketing pages and digital editorial content.', id: 'Grid tata letak utama untuk halaman pemasaran dan editorial digital.' }
+          },
+          {
+            id: 'grid-2',
+            name: { en: '4-Column Mobile Grid', id: 'Grid Seluler 4-Kolom' },
+            type: 'column',
+            columns: 4,
+            gutterPx: 16,
+            marginPx: 20,
+            contextChannel: 'Mobile Web & Apps',
+            description: { en: 'Compact grid with generous tap targets.', id: 'Grid ringkas dengan area sentuh yang nyaman.' }
+          }
+        ],
+        layoutPrinciples: [
+          {
+            id: 'lp-1',
+            title: { en: 'Intentional Whitespace & Asymmetry', id: 'Ruang Kosong Berniat & Asimetri' },
+            category: 'composition',
+            description: { en: 'Allow ample breathing room around heroes and imagery to evoke cafe tranquility.', id: 'Berikan ruang bernapas yang cukup di sekitar judul dan gambar untuk menghadirkan ketenangan kafe.' },
+            guidance: { en: 'Never crowd text against photo borders; maintain at least 48px margin.', id: 'Jangan rapatkan teks dengan tepi foto; pertahankan margin minimal 48px.' }
+          }
+        ],
+        spacingScale: {
+          baseUnitPx: 8,
+          scaleSteps: [4, 8, 16, 24, 32, 48, 64],
+          description: { en: 'Standard 8px geometric spacing scale.', id: 'Skala spasi geometris 8px standar.' }
+        }
+      },
+      imagery: {
+        directions: [
+          {
+            id: 'img-dir-1',
+            name: { en: 'Documentary Morning Rituals', id: 'Dokumenter Ritual Pagi' },
+            category: 'photography',
+            description: { en: 'Unposed, authentic captures of morning coffee preparation, warm steam, and natural daylight.', id: 'Foto natural tanpa pose dari pembuatan kopi pagi, uap hangat, dan cahaya alami.' },
+            mood: ['Warm', 'Natural', 'Calm', 'Human'],
+            subjects: ['People', 'Environment', 'Craft', 'Ritual'],
+            lighting: ['Natural Daylight', 'Soft Ambient'],
+            composition: ['Documentary', 'Spacious'],
+            doGuidance: { en: 'Shoot in authentic cafe lighting with soft depth of field.', id: 'Potret dalam cahaya kafe alami dengan kedalaman fokus yang lembut.' },
+            dontGuidance: { en: 'Avoid harsh studio flash or overly staged artificial smiles.', id: 'Hindari lampu kilat studio yang keras atau pose senyum buatan.' }
+          }
+        ],
+        treatments: [
+          {
+            id: 'img-trm-1',
+            name: { en: 'Warm Daylight Tone', id: 'Nuansa Cahaya Hangat' },
+            description: { en: 'Slightly lifted shadows with organic warm undertones.', id: 'Bayangan yang sedikit dinaikkan dengan rona hangat organik.' },
+            colorTreatment: ['Natural', 'Warm Film', 'Earthy']
+          }
+        ]
+      },
+      graphicLanguage: {
+        elements: [
+          {
+            id: 'ge-1',
+            name: { en: 'Topographic Contour Lines', id: 'Garis Kontur Topografi' },
+            category: 'pattern',
+            description: { en: 'Subtle wave contour lines reflecting coffee origin terrain elevations.', id: 'Garis kontur gelombang halus yang mencerminkan ketinggian daerah asal kopi.' },
+            characteristics: ['Organic', 'Minimal', 'Textured'],
+            usageNotes: { en: 'Use as faint 10% opacity watermarks on coffee packaging bags and retail menus.', id: 'Gunakan sebagai watermark 10% pada kemasan kantong kopi dan buku menu.' }
+          }
+        ],
+        illustrationStyles: [
+          {
+            id: 'illus-1',
+            name: { en: 'Botanical Monoline Line Art', id: 'Seni Garis Monoline Botani' },
+            style: ['Hand-drawn', 'Minimal', 'Monoline'],
+            subjects: ['Botanical', 'Cafe Life'],
+            description: { en: 'Delicate coffee branch and leaf sketches drawn with consistent 1.5px ink lines.', id: 'Sketsa cabang dan daun kopi yang digambar dengan garis tinta konsisten 1.5px.' }
+          }
+        ],
+        iconSystems: [
+          {
+            id: 'icon-sys-1',
+            name: { en: '24px Rounded Coffee UI Icons', id: 'Ikon UI Kopi Membulat 24px' },
+            style: ['Outline', 'Rounded', 'Monoline'],
+            gridSizePx: 24,
+            strokeWidthPx: 2,
+            cornerTreatment: 'rounded',
+            description: { en: 'Custom beverage, roast level, and brewing method icons for digital menus and signage.', id: 'Ikon minuman, tingkat sangrai, dan metode seduh untuk menu digital dan papan petunjuk.' }
+          }
+        ]
       }
     },
+    visualAssets: [
+      {
+        id: 'asset-wordmark-vector',
+        name: 'Northstar Wordmark Vector Package',
+        category: 'logos',
+        notes: {
+          en: 'Master vector SVG/EPS files for cafe signage and high-resolution packaging.',
+          id: 'File master vektor SVG/EPS untuk plang nama kafe dan kemasan resolusi tinggi.'
+        },
+        files: [
+          {
+            id: 'file-wm-svg',
+            filename: 'northstar-wordmark-master.svg',
+            format: 'svg',
+            sizeBytes: 24500,
+            uploadedAt: '2026-08-18T10:00:00.000Z'
+          },
+          {
+            id: 'file-wm-png',
+            filename: 'northstar-wordmark-4k.png',
+            format: 'png',
+            sizeBytes: 182000,
+            uploadedAt: '2026-08-18T10:00:00.000Z'
+          }
+        ],
+        references: [
+          {
+            moduleId: 'logoSystem',
+            entityName: 'Northstar Primary Wordmark'
+          }
+        ],
+        updatedAt: '2026-08-18T10:00:00.000Z'
+      },
+      {
+        id: 'asset-fraunces-family',
+        name: 'Fraunces Variable Font Family',
+        category: 'fonts',
+        notes: {
+          en: 'Open source serif display typeface by Undercase Type for all primary headings.',
+          id: 'Font serif display open source dari Undercase Type untuk seluruh judul utama.'
+        },
+        files: [
+          {
+            id: 'file-ff-woff2',
+            filename: 'Fraunces-VariableFont.woff2',
+            format: 'woff2',
+            sizeBytes: 112000,
+            uploadedAt: '2026-08-18T10:00:00.000Z'
+          }
+        ],
+        references: [
+          {
+            moduleId: 'typographySystem',
+            entityName: 'Fraunces'
+          }
+        ],
+        updatedAt: '2026-08-18T10:00:00.000Z'
+      },
+      {
+        id: 'asset-icons-ui-pack',
+        name: 'Coffee UI Icon SVG Set (24px)',
+        category: 'icons',
+        notes: {
+          en: 'Full 24-item SVG iconography collection for brewing guides and digital checkout.',
+          id: 'Koleksi lengkap 24 item ikon SVG untuk panduan seduh dan checkout digital.'
+        },
+        files: [
+          {
+            id: 'file-icons-zip',
+            filename: 'northstar-icons-24px.zip',
+            format: 'zip',
+            sizeBytes: 45200,
+            uploadedAt: '2026-08-18T10:00:00.000Z'
+          }
+        ],
+        references: [
+          {
+            moduleId: 'graphicLanguage',
+            entityName: '24px Rounded Coffee UI Icons'
+          }
+        ],
+        updatedAt: '2026-08-18T10:00:00.000Z'
+      }
+    ],
+    visualRules: [
+      {
+        id: 'rule-logo-clearspace',
+        name: 'Primary Logo Minimum Clearspace',
+        type: 'requirement',
+        context: 'logo',
+        guidance: {
+          en: 'Always maintain a minimum isolation zone around the wordmark equal to the height of the North Star emblem (X). Never encroach with body copy or edge trim.',
+          id: 'Selalu pertahankan zona isolasi minimum di sekeliling wordmark setara dengan tinggi simbol Bintang Northstar (X). Jangan biarkan teks atau tepi memotong area ini.'
+        },
+        tags: ['logo', 'clearspace', 'layout'],
+        references: [
+          {
+            domain: 'visualKnowledge',
+            entityType: 'rule',
+            entityId: 'logo-primary',
+            label: 'Northstar Primary Wordmark'
+          }
+        ],
+        updatedAt: '2026-08-18T10:00:00.000Z'
+      },
+      {
+        id: 'rule-color-contrast',
+        name: 'Warm Parchment Background Contrast',
+        type: 'restriction',
+        context: 'color',
+        guidance: {
+          en: 'Never place Amber Glow (#d97706) text over Warm Parchment (#f7f4ef) as it fails WCAG AA legibility. Use Espresso Earth (#2d241e) for all parchment-backed text.',
+          id: 'Jangan pernah menempatkan teks Amber Glow (#d97706) di atas latar Warm Parchment (#f7f4ef) karena tidak memenuhi standar kontras WCAG AA. Gunakan Espresso Earth (#2d241e).'
+        },
+        tags: ['color', 'accessibility', 'contrast'],
+        references: [
+          {
+            domain: 'visualKnowledge',
+            entityType: 'rule',
+            entityId: 'c-2',
+            label: 'Warm Parchment'
+          },
+          {
+            domain: 'visualKnowledge',
+            entityType: 'rule',
+            entityId: 'c-3',
+            label: 'Amber Glow'
+          }
+        ],
+        updatedAt: '2026-08-18T10:00:00.000Z'
+      },
+      {
+        id: 'rule-photo-authenticity',
+        name: 'Authentic Morning Lighting Requirement',
+        type: 'requirement',
+        context: 'imagery',
+        guidance: {
+          en: 'All cafe and customer photography must feature natural daylight and unposed moments adhering to the Documentary Morning Rituals style.',
+          id: 'Semua foto kafe dan pelanggan wajib menggunakan cahaya alami dan pose natural sesuai gaya Dokumenter Ritual Pagi.'
+        },
+        tags: ['photography', 'lighting', 'art-direction'],
+        references: [
+          {
+            domain: 'visualKnowledge',
+            entityType: 'imageryDirection',
+            entityId: 'img-dir-1',
+            label: 'Documentary Morning Rituals'
+          }
+        ],
+        updatedAt: '2026-08-18T10:00:00.000Z'
+      }
+    ],
     messaging: {
       tagline: {
         en: 'Grounded Mornings. Quiet Craft.',

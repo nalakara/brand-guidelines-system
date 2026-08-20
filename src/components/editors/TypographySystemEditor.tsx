@@ -392,7 +392,7 @@ export const TypographySystemEditor: React.FC<TypographySystemEditorProps> = ({
                   </div>
 
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    {font.weights?.length ? font.weights.map((w) => `${w}`).join(' · ') : 'Regular'}
+                    {font.weights?.length ? font.weights.map((w: number) => `${w}`).join(' · ') : 'Regular'}
                   </div>
 
                   <div

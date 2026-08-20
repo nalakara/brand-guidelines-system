@@ -529,15 +529,174 @@ export const GuidelinePreview: React.FC<GuidelinePreviewProps> = ({
             </div>
           )}
 
+          {/* Secondary Color Palettes */}
+          {brand.modules.visualBasics.secondaryColors && brand.modules.visualBasics.secondaryColors.length > 0 && (
+            <div style={{ marginBottom: '24px' }}>
+              <h4 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '12px' }}>
+                Secondary & Supporting Colors
+              </h4>
+              <div className="doc-colors-flex">
+                {brand.modules.visualBasics.secondaryColors.map((c) => {
+                  const nameRes = getText(c.name);
+                  const usageRes = getText(c.usage);
+                  return (
+                    <div key={c.id} className="doc-color-swatch-box">
+                      <div className="doc-swatch-rect" style={{ backgroundColor: c.hex }} />
+                      <div className="doc-swatch-meta">
+                        <div className="doc-swatch-name">{nameRes.text}</div>
+                        <div className="doc-swatch-hex">{c.hex}</div>
+                        {usageRes.text && <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '4px' }}>{usageRes.text}</div>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Typography System */}
           {(() => {
             const typo = getText(brand.modules.visualBasics.typographyNotes);
             return typo.text ? (
-              <div className="doc-info-block" style={{ marginTop: '20px' }}>
+              <div className="doc-info-block" style={{ marginTop: '20px', marginBottom: '24px' }}>
                 <div className="doc-info-label">Typography Direction</div>
                 <div className="doc-info-val" style={{ fontWeight: 400 }}>{typo.text}</div>
               </div>
             ) : null;
           })()}
+
+          {brand.modules.visualBasics.fonts && brand.modules.visualBasics.fonts.length > 0 && (
+            <div style={{ marginBottom: '28px' }}>
+              <h4 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '12px' }}>
+                Brand Font Families ({brand.modules.visualBasics.fonts.length})
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+                {brand.modules.visualBasics.fonts.map((f) => (
+                  <div key={f.id} style={{ backgroundColor: '#f8fafc', padding: '14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ fontWeight: 700, fontSize: '1rem', color: '#0f172a' }}>{f.name}</div>
+                      <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 600, backgroundColor: 'var(--accent-light)', color: 'var(--accent-primary)', padding: '2px 8px', borderRadius: '4px' }}>
+                        {f.role}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '4px' }}>
+                      Weights: {f.weights?.join(', ') || 'Regular'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {brand.modules.visualBasics.typeStyles && brand.modules.visualBasics.typeStyles.length > 0 && (
+            <div style={{ marginBottom: '28px' }}>
+              <h4 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '12px' }}>
+                Type Hierarchy & Styles ({brand.modules.visualBasics.typeStyles.length})
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {brand.modules.visualBasics.typeStyles.map((ts) => {
+                  const sampleRes = getText(ts.sampleText);
+                  return (
+                    <div key={ts.id} style={{ backgroundColor: '#ffffff', border: '1px solid var(--border-light)', padding: '12px 16px', borderRadius: 'var(--radius-sm)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: '0.9rem', color: '#0f172a' }}>{ts.name}</div>
+                        <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '2px' }}>
+                          {ts.sizePx}px / {ts.lineHeight} line-height • {ts.weight} weight • {ts.category}
+                        </div>
+                      </div>
+                      {sampleRes.text && (
+                        <div style={{ fontSize: '0.86rem', color: '#475569', fontStyle: 'italic', maxWidth: '40%' }}>
+                          "{sampleRes.text}"
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Grid Systems Display */}
+          {brand.modules.visualBasics.layoutComposition?.gridSystems && brand.modules.visualBasics.layoutComposition.gridSystems.length > 0 && (
+            <div style={{ marginBottom: '28px' }}>
+              <h4 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '12px' }}>
+                Grid Systems ({brand.modules.visualBasics.layoutComposition.gridSystems.length})
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+                {brand.modules.visualBasics.layoutComposition.gridSystems.map((grid) => {
+                  const gName = getText(grid.name);
+                  const gDesc = getText(grid.description);
+                  return (
+                    <div key={grid.id} style={{ backgroundColor: '#f8fafc', padding: '14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                      <div style={{ fontWeight: 600, fontSize: '0.92rem', color: '#0f172a' }}>{gName.text}</div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--accent-primary)', fontWeight: 600, marginTop: '2px' }}>
+                        {grid.type?.toUpperCase()} {grid.columns ? `• ${grid.columns} cols` : ''} {grid.gutterPx ? `• ${grid.gutterPx}px gutter` : ''}
+                      </div>
+                      {gDesc.text && <div style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '6px' }}>{gDesc.text}</div>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Imagery Directions Display */}
+          {brand.modules.visualBasics.imagery?.directions && brand.modules.visualBasics.imagery.directions.length > 0 && (
+            <div style={{ marginBottom: '28px' }}>
+              <h4 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '12px' }}>
+                Imagery & Photography Directions ({brand.modules.visualBasics.imagery.directions.length})
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
+                {brand.modules.visualBasics.imagery.directions.map((dir) => {
+                  const dName = getText(dir.name);
+                  const dDesc = getText(dir.description);
+                  const doRes = getText(dir.doGuidance);
+                  return (
+                    <div key={dir.id} style={{ backgroundColor: '#f8fafc', padding: '16px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                      <div style={{ fontWeight: 600, fontSize: '0.94rem', color: '#0f172a' }}>{dName.text}</div>
+                      {dDesc.text && <div style={{ fontSize: '0.84rem', color: '#475569', marginTop: '4px', lineHeight: 1.5 }}>{dDesc.text}</div>}
+                      {dir.mood && dir.mood.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '8px' }}>
+                          {dir.mood.map((m) => (
+                            <span key={m} style={{ fontSize: '0.7rem', backgroundColor: '#e2e8f0', color: '#334155', padding: '2px 6px', borderRadius: '3px' }}>
+                              {m}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {doRes.text && (
+                        <div style={{ fontSize: '0.78rem', color: '#16a34a', backgroundColor: '#f0fdf4', padding: '6px 8px', borderRadius: '4px', marginTop: '10px' }}>
+                          ✓ {doRes.text}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Graphic Language Elements Display */}
+          {brand.modules.visualBasics.graphicLanguage?.elements && brand.modules.visualBasics.graphicLanguage.elements.length > 0 && (
+            <div style={{ marginBottom: '28px' }}>
+              <h4 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '12px' }}>
+                Graphic Motifs & Elements ({brand.modules.visualBasics.graphicLanguage.elements.length})
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px' }}>
+                {brand.modules.visualBasics.graphicLanguage.elements.map((el) => {
+                  const elName = getText(el.name);
+                  const elDesc = getText(el.description);
+                  return (
+                    <div key={el.id} style={{ backgroundColor: '#ffffff', border: '1px solid var(--border-light)', padding: '12px', borderRadius: 'var(--radius-sm)' }}>
+                      <div style={{ fontWeight: 600, fontSize: '0.88rem', color: '#0f172a' }}>{elName.text}</div>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', marginTop: '2px' }}>{el.category}</div>
+                      {elDesc.text && <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '4px' }}>{elDesc.text}</div>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </section>
       )}
 
@@ -584,6 +743,106 @@ export const GuidelinePreview: React.FC<GuidelinePreviewProps> = ({
               </ul>
             </div>
           )}
+
+          {/* Calls to Action */}
+          {brand.modules.messaging.callsToAction && brand.modules.messaging.callsToAction.length > 0 && (
+            <div style={{ marginTop: '20px' }}>
+              <h4 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '12px' }}>
+                Calls to Action
+              </h4>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                {brand.modules.messaging.callsToAction.map((cta) => {
+                  const labelRes = getText(cta.label);
+                  return (
+                    <div key={cta.id} style={{ backgroundColor: 'var(--accent-light)', border: '1px solid var(--accent-primary)', padding: '8px 14px', borderRadius: 'var(--radius-sm)' }}>
+                      <span style={{ fontWeight: 600, color: 'var(--accent-primary)', fontSize: '0.9rem' }}>{labelRes.text}</span>
+                      {cta.contextChannel && <span style={{ fontSize: '0.74rem', color: '#64748b', marginLeft: '8px' }}>({cta.contextChannel})</span>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* 8. Visual Assets Section */}
+      {activeModuleIds.includes('visualAssets') && brand.modules.visualAssets && brand.modules.visualAssets.length > 0 && (
+        <section className="doc-section" id="section-visualAssets">
+          <div className="doc-section-header">
+            <h2 className="doc-section-title">
+              <span className="doc-section-num">0{sectionCounter++}</span> Visual Asset Library
+            </h2>
+            <button className="btn-jump-edit" onClick={() => onJumpToModule('visualAssets')}>
+              <Edit2 size={13} /> Edit Section
+            </button>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
+            {brand.modules.visualAssets.map((asset) => {
+              const notesRes = getText(asset.notes);
+              return (
+                <div key={asset.id} style={{ backgroundColor: '#ffffff', border: '1px solid var(--border-light)', padding: '16px', borderRadius: 'var(--radius-sm)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontWeight: 600, fontSize: '0.94rem', color: '#0f172a' }}>{asset.name}</div>
+                    <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 600, backgroundColor: '#f1f5f9', color: '#475569', padding: '2px 8px', borderRadius: '4px' }}>
+                      {asset.category}
+                    </span>
+                  </div>
+                  {notesRes.text && <div style={{ fontSize: '0.84rem', color: '#64748b', marginTop: '6px' }}>{notesRes.text}</div>}
+                  <div style={{ fontSize: '0.78rem', color: 'var(--accent-primary)', marginTop: '8px', fontWeight: 500 }}>
+                    {asset.files.length} file{asset.files.length !== 1 ? 's' : ''} ({asset.files.map(f => f.format.toUpperCase()).join(', ')})
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* 9. Visual Rules Section */}
+      {activeModuleIds.includes('visualRules') && brand.modules.visualRules && brand.modules.visualRules.length > 0 && (
+        <section className="doc-section" id="section-visualRules">
+          <div className="doc-section-header">
+            <h2 className="doc-section-title">
+              <span className="doc-section-num">0{sectionCounter++}</span> Visual Rules & Governance
+            </h2>
+            <button className="btn-jump-edit" onClick={() => onJumpToModule('visualRules')}>
+              <Edit2 size={13} /> Edit Section
+            </button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {brand.modules.visualRules.map((rule) => {
+              const guideRes = getText(rule.guidance);
+              const typeColor = rule.type === 'restriction' ? '#dc2626' : rule.type === 'requirement' ? '#d97706' : rule.type === 'preference' ? '#2563eb' : '#16a34a';
+              return (
+                <div key={rule.id} style={{ backgroundColor: '#ffffff', border: '1px solid var(--border-light)', padding: '14px 18px', borderRadius: 'var(--radius-sm)', borderLeft: `4px solid ${typeColor}` }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontWeight: 600, fontSize: '0.94rem', color: '#0f172a' }}>{rule.name}</div>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <span style={{ fontSize: '0.68rem', textTransform: 'uppercase', fontWeight: 700, color: typeColor, backgroundColor: '#f8fafc', border: `1px solid ${typeColor}`, padding: '2px 8px', borderRadius: '4px' }}>
+                        {rule.type}
+                      </span>
+                      <span style={{ fontSize: '0.68rem', textTransform: 'uppercase', fontWeight: 600, color: '#64748b', backgroundColor: '#f1f5f9', padding: '2px 8px', borderRadius: '4px' }}>
+                        {rule.context}
+                      </span>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '0.86rem', color: '#334155', marginTop: '6px', lineHeight: 1.5 }}>
+                    {guideRes.text}
+                  </div>
+                  {rule.references && rule.references.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
+                      {rule.references.map((ref, rIdx) => (
+                        <span key={rIdx} style={{ fontSize: '0.7rem', backgroundColor: '#f1f5f9', color: '#475569', padding: '2px 6px', borderRadius: '3px' }}>
+                          ↳ {ref.label || ref.entityId}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </section>
       )}
     </div>

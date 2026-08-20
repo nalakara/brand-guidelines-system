@@ -13,6 +13,14 @@ import {
   KeyMessageEntity,
   ProofPointEntity,
   CTAEntity,
+  GridSystemEntity,
+  LayoutPrincipleEntity,
+  SpacingScaleData,
+  ImageryDirectionEntity,
+  ImageTreatmentEntity,
+  GraphicElementEntity,
+  IllustrationStyleEntity,
+  IconographySystemEntity,
   LocalizedString
 } from '../types/brand';
 
@@ -303,12 +311,228 @@ export function normalizeBrandData(brand: Brand): Brand {
       : [];
 
     modules.messaging = {
-      tagline: rawMsg.tagline || { en: '', id: '' },
-      elevatorPitch: rawMsg.elevatorPitch || { en: '', id: '' },
+      ...rawMsg,
       keyMessages,
       proofPoints,
       callsToAction
     };
+  }
+
+  // 6. Normalize Visual Knowledge (Layout, Imagery, Graphic Language)
+  const visualModule = modules.visualBasics || modules.visualKnowledge;
+  if (visualModule) {
+    const rawVisual: any = visualModule;
+
+    // A. Layout & Composition
+    const rawLayout: any = rawVisual.layoutComposition || {};
+    let gridSystems: GridSystemEntity[] = Array.isArray(rawLayout.gridSystems)
+      ? rawLayout.gridSystems.map((g: any, idx: number) => ({
+          id: g.id || `grid-${idx + 1}`,
+          name: g.name || { en: 'Primary Grid System' },
+          type: g.type || 'column',
+          columns: g.columns,
+          gutterPx: g.gutterPx,
+          marginPx: g.marginPx,
+          contextChannel: g.contextChannel || '',
+          description: g.description || { en: '', id: '' }
+        }))
+      : [];
+
+    // Legacy grid migration without fabricating knowledge
+    if (gridSystems.length === 0 && rawLayout.grid && (rawLayout.grid.columns || rawLayout.grid.description?.en || rawLayout.grid.description?.id)) {
+      gridSystems = [
+        {
+          id: 'grid-1',
+          name: { en: 'Primary Grid System', id: 'Sistem Grid Utama' },
+          type: rawLayout.grid.type || 'column',
+          columns: rawLayout.grid.columns,
+          gutterPx: rawLayout.grid.gutterPx,
+          marginPx: rawLayout.grid.marginPx,
+          contextChannel: 'General Layout',
+          description: rawLayout.grid.description || { en: '', id: '' }
+        }
+      ];
+    }
+
+    let layoutPrinciples: LayoutPrincipleEntity[] = Array.isArray(rawLayout.layoutPrinciples)
+      ? rawLayout.layoutPrinciples.map((lp: any, idx: number) => ({
+          id: lp.id || `lp-${idx + 1}`,
+          title: lp.title || { en: 'Layout Principle' },
+          category: lp.category || 'composition',
+          description: lp.description || { en: '', id: '' },
+          guidance: lp.guidance || { en: '', id: '' }
+        }))
+      : [];
+
+    // Legacy proportion/hierarchy principles migration
+    if (layoutPrinciples.length === 0) {
+      if (rawLayout.hierarchy?.description?.en || rawLayout.hierarchy?.description?.id) {
+        layoutPrinciples.push({
+          id: 'lp-hierarchy-1',
+          title: { en: 'Visual Hierarchy', id: 'Hierarki Visual' },
+          category: 'hierarchy',
+          description: rawLayout.hierarchy.description,
+          guidance: { en: '', id: '' }
+        });
+      }
+      if (rawLayout.compositionPrinciples?.description?.en || rawLayout.compositionPrinciples?.description?.id) {
+        layoutPrinciples.push({
+          id: 'lp-comp-1',
+          title: { en: 'Composition Discipline', id: 'Disiplin Komposisi' },
+          category: 'composition',
+          description: rawLayout.compositionPrinciples.description,
+          guidance: { en: '', id: '' }
+        });
+      }
+    }
+
+    const spacingScale: SpacingScaleData = rawLayout.spacingScale || {
+      baseUnitPx: rawLayout.spacing?.baseUnitPx,
+      scaleSteps: rawLayout.spacingScale?.scaleSteps, // Preserve explicit scale steps only; never fabricate
+      description: rawLayout.spacing?.description || { en: '', id: '' }
+    };
+
+    rawVisual.layoutComposition = {
+      ...rawLayout,
+      gridSystems,
+      layoutPrinciples,
+      spacingScale
+    };
+
+    // B. Imagery & Photography
+    const rawImagery: any = rawVisual.imagery || {};
+    let directions: ImageryDirectionEntity[] = Array.isArray(rawImagery.directions)
+      ? rawImagery.directions.map((d: any, idx: number) => ({
+          id: d.id || `img-dir-${idx + 1}`,
+          name: d.name || { en: 'Primary Imagery Direction' },
+          category: d.category || 'photography',
+          description: d.description || { en: '', id: '' },
+          mood: d.mood || [],
+          subjects: d.subjects || [],
+          lighting: d.lighting || [],
+          composition: d.composition || [],
+          doGuidance: d.doGuidance || { en: '', id: '' },
+          dontGuidance: d.dontGuidance || { en: '', id: '' }
+        }))
+      : [];
+
+    // Legacy photography migration
+    if (directions.length === 0 && rawImagery.photography && (rawImagery.photography.description?.en || rawImagery.photography.description?.id || rawImagery.photography.mood?.length)) {
+      directions = [
+        {
+          id: 'img-dir-1',
+          name: { en: 'Core Photography Style', id: 'Gaya Fotografi Utama' },
+          category: 'photography',
+          description: rawImagery.photography.description || { en: '', id: '' },
+          mood: rawImagery.photography.mood || [],
+          subjects: rawImagery.photography.subjects || [],
+          lighting: rawImagery.photography.lighting || [],
+          composition: rawImagery.photography.composition || [],
+          doGuidance: { en: '', id: '' },
+          dontGuidance: { en: '', id: '' }
+        }
+      ];
+    }
+
+    let treatments: ImageTreatmentEntity[] = Array.isArray(rawImagery.treatments)
+      ? rawImagery.treatments.map((trm: any, idx: number) => ({
+          id: trm.id || `img-trm-${idx + 1}`,
+          name: trm.name || { en: 'Color Treatment' },
+          description: trm.description || { en: '', id: '' },
+          colorTreatment: trm.colorTreatment || [],
+          filterNotes: trm.filterNotes || { en: '', id: '' }
+        }))
+      : [];
+
+    if (treatments.length === 0 && (rawImagery.photography?.colorTreatment?.length || rawImagery.artDirection?.treatment?.en)) {
+      treatments = [
+        {
+          id: 'img-trm-1',
+          name: { en: 'Signature Image Treatment', id: 'Perlakuan Gambar Khas' },
+          description: rawImagery.artDirection?.treatment || { en: '', id: '' },
+          colorTreatment: rawImagery.photography?.colorTreatment || []
+        }
+      ];
+    }
+
+    rawVisual.imagery = {
+      ...rawImagery,
+      directions,
+      treatments
+    };
+
+    // C. Graphic Language
+    const rawGL: any = rawVisual.graphicLanguage || {};
+    let elements: GraphicElementEntity[] = Array.isArray(rawGL.elements)
+      ? rawGL.elements.map((el: any, idx: number) => ({
+          id: el.id || `ge-${idx + 1}`,
+          name: el.name || { en: 'Graphic Element' },
+          category: el.category || 'pattern',
+          description: el.description || { en: '', id: '' },
+          characteristics: el.characteristics || [],
+          usageNotes: el.usageNotes || { en: '', id: '' }
+        }))
+      : [];
+
+    let illustrationStyles: IllustrationStyleEntity[] = Array.isArray(rawGL.illustrationStyles)
+      ? rawGL.illustrationStyles.map((il: any, idx: number) => ({
+          id: il.id || `illus-${idx + 1}`,
+          name: il.name || { en: 'Illustration Style' },
+          style: il.style || [],
+          subjects: il.subjects || [],
+          description: il.description || { en: '', id: '' },
+          treatment: il.treatment || { en: '', id: '' }
+        }))
+      : [];
+
+    if (illustrationStyles.length === 0 && rawGL.illustration && (rawGL.illustration.description?.en || rawGL.illustration.style?.length)) {
+      illustrationStyles = [
+        {
+          id: 'illus-1',
+          name: { en: 'Primary Illustration Direction', id: 'Arah Ilustrasi Utama' },
+          style: rawGL.illustration.style || [],
+          subjects: rawGL.illustration.subject || [],
+          description: rawGL.illustration.description || { en: '', id: '' },
+          treatment: rawGL.illustration.treatment || { en: '', id: '' }
+        }
+      ];
+    }
+
+    let iconSystems: IconographySystemEntity[] = Array.isArray(rawGL.iconSystems)
+      ? rawGL.iconSystems.map((ic: any, idx: number) => ({
+          id: ic.id || `icon-sys-${idx + 1}`,
+          name: ic.name || { en: 'Iconography System' },
+          style: ic.style || [],
+          gridSizePx: ic.gridSizePx,
+          strokeWidthPx: ic.strokeWidthPx,
+          description: ic.description || { en: '', id: '' },
+          cornerTreatment: ic.cornerTreatment || 'rounded'
+        }))
+      : [];
+
+    if (iconSystems.length === 0 && rawGL.iconography && (rawGL.iconography.description?.en || rawGL.iconography.characteristics?.length)) {
+      iconSystems = [
+        {
+          id: 'icon-sys-1',
+          name: { en: 'Core Icon System', id: 'Sistem Ikon Utama' },
+          style: rawGL.iconography.characteristics || ['Outline'],
+          gridSizePx: 24,
+          strokeWidthPx: 2,
+          description: rawGL.iconography.description || { en: '', id: '' },
+          cornerTreatment: 'rounded'
+        }
+      ];
+    }
+
+    rawVisual.graphicLanguage = {
+      ...rawGL,
+      elements,
+      illustrationStyles,
+      iconSystems
+    };
+
+    if (modules.visualBasics) modules.visualBasics = rawVisual;
+    if (modules.visualKnowledge) modules.visualKnowledge = rawVisual;
   }
 
   return {

@@ -196,7 +196,126 @@ export function getAvailableEntities(
     });
   }
 
-  // 11. Visual Assets
+  // 11. Visual Knowledge: Grid Systems
+  if (visualBasics?.layoutComposition?.gridSystems) {
+    visualBasics.layoutComposition.gridSystems.forEach((grid) => {
+      const gridName = getLocalizedText(grid.name, lang).text || 'Grid System';
+      items.push({
+        reference: {
+          domain: 'visualKnowledge',
+          entityType: 'gridSystem',
+          entityId: grid.id,
+          label: gridName
+        },
+        name: grid.columns ? `${gridName} (${grid.columns} cols)` : gridName,
+        categoryOrRole: grid.type ? `${grid.type.toUpperCase()} Grid` : 'Grid System'
+      });
+    });
+  }
+
+  // 12. Visual Knowledge: Layout Principles
+  if (visualBasics?.layoutComposition?.layoutPrinciples) {
+    visualBasics.layoutComposition.layoutPrinciples.forEach((lp) => {
+      const lpTitle = getLocalizedText(lp.title, lang).text || 'Layout Principle';
+      items.push({
+        reference: {
+          domain: 'visualKnowledge',
+          entityType: 'layoutPrinciple',
+          entityId: lp.id,
+          label: lpTitle
+        },
+        name: lpTitle,
+        categoryOrRole: `${lp.category.charAt(0).toUpperCase() + lp.category.slice(1)} Principle`
+      });
+    });
+  }
+
+  // 13. Visual Knowledge: Imagery Directions
+  if (visualBasics?.imagery?.directions) {
+    visualBasics.imagery.directions.forEach((d) => {
+      const dirName = getLocalizedText(d.name, lang).text || 'Imagery Direction';
+      items.push({
+        reference: {
+          domain: 'visualKnowledge',
+          entityType: 'imageryDirection',
+          entityId: d.id,
+          label: dirName
+        },
+        name: dirName,
+        categoryOrRole: d.category ? `${d.category.charAt(0).toUpperCase() + d.category.slice(1)} Direction` : 'Imagery Direction'
+      });
+    });
+  }
+
+  // 14. Visual Knowledge: Image Treatments
+  if (visualBasics?.imagery?.treatments) {
+    visualBasics.imagery.treatments.forEach((trm) => {
+      const trmName = getLocalizedText(trm.name, lang).text || 'Image Treatment';
+      items.push({
+        reference: {
+          domain: 'visualKnowledge',
+          entityType: 'imageTreatment',
+          entityId: trm.id,
+          label: trmName
+        },
+        name: trmName,
+        categoryOrRole: 'Image Treatment'
+      });
+    });
+  }
+
+  // 15. Visual Knowledge: Graphic Elements / Motifs
+  if (visualBasics?.graphicLanguage?.elements) {
+    visualBasics.graphicLanguage.elements.forEach((el) => {
+      const elName = getLocalizedText(el.name, lang).text || 'Graphic Element';
+      items.push({
+        reference: {
+          domain: 'visualKnowledge',
+          entityType: 'graphicElement',
+          entityId: el.id,
+          label: elName
+        },
+        name: elName,
+        categoryOrRole: el.category ? `${el.category.charAt(0).toUpperCase() + el.category.slice(1)} Motif` : 'Graphic Motif'
+      });
+    });
+  }
+
+  // 16. Visual Knowledge: Illustration Styles
+  if (visualBasics?.graphicLanguage?.illustrationStyles) {
+    visualBasics.graphicLanguage.illustrationStyles.forEach((il) => {
+      const ilName = getLocalizedText(il.name, lang).text || 'Illustration Style';
+      items.push({
+        reference: {
+          domain: 'visualKnowledge',
+          entityType: 'illustrationStyle',
+          entityId: il.id,
+          label: ilName
+        },
+        name: ilName,
+        categoryOrRole: 'Illustration Style'
+      });
+    });
+  }
+
+  // 17. Visual Knowledge: Iconography Systems
+  if (visualBasics?.graphicLanguage?.iconSystems) {
+    visualBasics.graphicLanguage.iconSystems.forEach((ic) => {
+      const icName = getLocalizedText(ic.name, lang).text || 'Iconography System';
+      items.push({
+        reference: {
+          domain: 'visualKnowledge',
+          entityType: 'iconSystem',
+          entityId: ic.id,
+          label: icName
+        },
+        name: ic.gridSizePx ? `${icName} (${ic.gridSizePx}px)` : icName,
+        categoryOrRole: 'Iconography System'
+      });
+    });
+  }
+
+  // 18. Visual Assets
   if (modules.visualAssets) {
     modules.visualAssets.forEach((a) => {
       const firstFile = a.files[0];
@@ -214,7 +333,7 @@ export function getAvailableEntities(
     });
   }
 
-  // 12. Visual Rules
+  // 19. Visual Rules
   if (modules.visualRules) {
     modules.visualRules.forEach((r) => {
       items.push({
@@ -266,20 +385,23 @@ export function resolveEntityLabel(
 export function findBackReferences(
   brand: Brand,
   targetEntityId: string
-): { sourceDomain: string; sourceEntityType: string; sourceName: string }[] {
+): { sourceDomain: string; sourceEntityType: string; sourceName: string; referencerName?: string; referencerDomain?: string }[] {
   if (!brand || !brand.modules || !targetEntityId) return [];
 
-  const results: { sourceDomain: string; sourceEntityType: string; sourceName: string }[] = [];
+  const results: { sourceDomain: string; sourceEntityType: string; sourceName: string; referencerName?: string; referencerDomain?: string }[] = [];
   const { modules } = brand;
 
   // Check Visual Rules
   if (modules.visualRules) {
-    modules.visualRules.forEach((rule) => {
-      if (rule.references?.some((r) => r.entityId === targetEntityId)) {
+    modules.visualRules.forEach((rule: any) => {
+      const allRefs = rule.references || rule.relatedEntities || [];
+      if (allRefs.some((r: any) => r.entityId === targetEntityId)) {
         results.push({
           sourceDomain: 'Visual Rules',
           sourceEntityType: 'rule',
-          sourceName: rule.name
+          sourceName: rule.name,
+          referencerName: rule.name,
+          referencerDomain: 'visualRules'
         });
       }
     });
@@ -292,10 +414,13 @@ export function findBackReferences(
         km.targetAudienceRef?.entityId === targetEntityId ||
         km.proofPointRefs?.some((r) => r.entityId === targetEntityId)
       ) {
+        const headline = getLocalizedText(km.headline, 'en').text || 'Key Message';
         results.push({
           sourceDomain: 'Brand Messaging',
           sourceEntityType: 'keyMessage',
-          sourceName: getLocalizedText(km.headline, 'en').text || 'Key Message'
+          sourceName: headline,
+          referencerName: headline,
+          referencerDomain: 'messaging'
         });
       }
     });
