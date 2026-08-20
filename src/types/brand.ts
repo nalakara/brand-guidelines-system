@@ -8,7 +8,8 @@ export type ModuleId =
   | 'visualKnowledge'
   | 'visualAssets'
   | 'visualRules'
-  | 'messaging';
+  | 'messaging'
+  | 'brandExpression';
 
 export type Language = 'en' | 'id';
 
@@ -57,7 +58,8 @@ export type EntityDomain =
   | 'foundation'
   | 'visualKnowledge'
   | 'visualAssets'
-  | 'visualRules';
+  | 'visualRules'
+  | 'brandExpression';
 
 export type EntityType =
   // Foundation Entities
@@ -86,13 +88,60 @@ export type EntityType =
   | 'iconSystem'
   // Visual Assets & Rules
   | 'asset'
-  | 'rule';
+  | 'rule'
+  // Brand Expression Entities
+  | 'touchpoint';
 
 export interface EntityReference {
   domain: EntityDomain;
   entityType: EntityType;
   entityId: string;
   label?: string; // Human label cached for quick render
+}
+
+// --- Brand Expression Entities ---
+
+export type TouchpointCategory =
+  | 'stationery'        // Business cards, letterhead, envelopes, invoices
+  | 'presentation'      // Keynote/PPT decks, pitch templates
+  | 'socialMedia'       // Instagram grid/story, LinkedIn banners, YouTube covers
+  | 'advertising'       // OOH billboards, digital ads, print ads
+  | 'digitalProduct'    // Web hero, app icons, UI components
+  | 'packaging'         // Boxes, coffee bags, pouches, labels, tape
+  | 'signage'           // Wayfinding, storefront fascia, interior signs
+  | 'environmental'     // Wall graphics, exhibition booths, murals
+  | 'apparel'           // Uniforms, aprons, totes, merchandise
+  | 'vehicle'           // Fleet wraps, delivery vans
+  | 'custom';
+
+export interface TouchpointSpecification {
+  dimensions?: string;              // e.g. "90 × 50 mm", "1080 × 1920 px"
+  aspectRatio?: string;             // e.g. "1:1", "16:9", "9:16"
+  colorSpace?: 'CMYK' | 'RGB' | 'PMS' | 'Monochrome';
+  materialsFinish?: LocalizedString;// e.g. "350gsm Uncoated Cotton Paper"
+  safeZonePadding?: string;         // e.g. "5mm bleed, 10mm inner margin"
+  productionNotes?: LocalizedString;// e.g. "Vector stroke >= 0.5pt for foil deboss"
+}
+
+export interface TouchpointEntity {
+  id: string;                       // 'tp-1', 'tp-card'
+  name: LocalizedString;            // "Primary Business Card"
+  category: TouchpointCategory;     // 'stationery'
+  channelContext?: string;          // 'Print / Networking'
+  description?: LocalizedString;
+  specifications?: TouchpointSpecification;
+  guidelines?: {
+    doCopy?: LocalizedString;       // "Keep contact details aligned to the subgrid"
+    dontCopy?: LocalizedString;     // "Do not place dark artwork behind small text"
+  };
+  appliedAssetRefs?: EntityReference[]; // Templates, dielines, mockups in Visual Assets
+  appliedRuleRefs?: EntityReference[];  // Governing Visual Rules
+  governingEntityRefs?: EntityReference[]; // Logo, Color, Typography used
+}
+
+export interface BrandExpressionModule {
+  overview?: LocalizedString;
+  touchpoints: TouchpointEntity[];
 }
 
 // --- Foundation Entities ---
@@ -644,6 +693,7 @@ export interface BrandModulesData {
   visualAssets?: VisualAssetItem[];
   visualRules?: VisualRuleItem[];
   messaging?: MessagingModule;
+  brandExpression?: BrandExpressionModule;
 }
 
 export interface Brand {

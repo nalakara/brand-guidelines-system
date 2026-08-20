@@ -1,6 +1,7 @@
 import React from 'react';
 import { Brand, ModuleId, Language, getLocalizedText } from '../../types/brand';
 import { Edit2, CheckCircle2 } from 'lucide-react';
+import { PreviewExpression } from './sections/PreviewExpression';
 import '../../styles/preview.css';
 
 interface GuidelinePreviewProps {
@@ -844,6 +845,16 @@ export const GuidelinePreview: React.FC<GuidelinePreviewProps> = ({
             })}
           </div>
         </section>
+      )}
+
+      {/* 10. Brand Expression Section (Level 3.1) */}
+      {activeModuleIds.includes('brandExpression') && brand.modules.brandExpression && (
+        <PreviewExpression
+          brand={brand}
+          contentLanguage={contentLanguage}
+          onJumpToModule={onJumpToModule}
+          sectionNumber={sectionCounter++}
+        />
       )}
     </div>
   );

@@ -21,6 +21,7 @@ import {
   GraphicElementEntity,
   IllustrationStyleEntity,
   IconographySystemEntity,
+  TouchpointEntity,
   LocalizedString
 } from '../types/brand';
 
@@ -533,6 +534,44 @@ export function normalizeBrandData(brand: Brand): Brand {
 
     if (modules.visualBasics) modules.visualBasics = rawVisual;
     if (modules.visualKnowledge) modules.visualKnowledge = rawVisual;
+  }
+
+  // 10. Normalize Brand Expression (Level 3.1)
+  if (modules.brandExpression || brand.activeModules?.includes('brandExpression')) {
+    const rawExpr: any = modules.brandExpression || {};
+    const touchpoints: TouchpointEntity[] = Array.isArray(rawExpr.touchpoints)
+      ? rawExpr.touchpoints.map((tp: any, idx: number) => ({
+          id: tp.id || `tp-${idx + 1}`,
+          name: tp.name || { en: 'Touchpoint', id: 'Titik Sentuh' },
+          category: tp.category || 'custom',
+          channelContext: tp.channelContext || '',
+          description: tp.description || { en: '', id: '' },
+          specifications: tp.specifications
+            ? {
+                dimensions: tp.specifications.dimensions || '',
+                aspectRatio: tp.specifications.aspectRatio || '',
+                colorSpace: tp.specifications.colorSpace,
+                materialsFinish: tp.specifications.materialsFinish || { en: '', id: '' },
+                safeZonePadding: tp.specifications.safeZonePadding || '',
+                productionNotes: tp.specifications.productionNotes || { en: '', id: '' }
+              }
+            : undefined,
+          guidelines: tp.guidelines
+            ? {
+                doCopy: tp.guidelines.doCopy || { en: '', id: '' },
+                dontCopy: tp.guidelines.dontCopy || { en: '', id: '' }
+              }
+            : undefined,
+          appliedAssetRefs: Array.isArray(tp.appliedAssetRefs) ? tp.appliedAssetRefs : [],
+          appliedRuleRefs: Array.isArray(tp.appliedRuleRefs) ? tp.appliedRuleRefs : [],
+          governingEntityRefs: Array.isArray(tp.governingEntityRefs) ? tp.governingEntityRefs : []
+        }))
+      : [];
+
+    modules.brandExpression = {
+      overview: rawExpr.overview || { en: '', id: '' },
+      touchpoints
+    };
   }
 
   return {

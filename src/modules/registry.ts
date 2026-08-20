@@ -33,25 +33,30 @@ export const MODULE_GROUPS: ModuleGroup[] = [
     moduleIds: ['overview']
   },
   {
+    domainKey: 'domainFoundation',
+    moduleIds: ['strategy', 'positioning', 'personality', 'voiceTone', 'messaging']
+  },
+  {
     domainKey: 'domainVisualGuidelines',
     moduleIds: ['visualKnowledge', 'visualAssets', 'visualRules']
   },
   {
-    domainKey: 'domainFoundation',
-    moduleIds: ['strategy', 'positioning', 'personality', 'voiceTone', 'messaging']
+    domainKey: 'domainBrandExpression',
+    moduleIds: ['brandExpression']
   }
 ];
 
 export const ALL_MODULE_IDS: ModuleId[] = [
   'overview',
-  'visualKnowledge',
-  'visualAssets',
-  'visualRules',
   'strategy',
   'positioning',
   'personality',
   'voiceTone',
-  'messaging'
+  'messaging',
+  'visualKnowledge',
+  'visualAssets',
+  'visualRules',
+  'brandExpression'
 ];
 
 export const MODULE_REGISTRY: Record<ModuleId, ModuleDefinition> = {
@@ -266,6 +271,23 @@ export const MODULE_REGISTRY: Record<ModuleId, ModuleDefinition> = {
       
       if (!hasTagline && !hasPitch && keyMsgsCount === 0) return 'empty';
       if ((hasTagline || hasPitch) && keyMsgsCount >= 2) return 'complete';
+      return 'started';
+    }
+  },
+  brandExpression: {
+    id: 'brandExpression',
+    nameKey: 'moduleBrandExpression',
+    shortDescription: 'Touchpoints, real-world packaging, stationery, digital, and environmental applications.',
+    iconName: 'LayoutTemplate',
+    defaultData: () => ({
+      overview: { en: '', id: '' },
+      touchpoints: []
+    }),
+    calculateCompletion: (data?: any): CompletionStatus => {
+      if (!data) return 'empty';
+      const touchpointsCount = data.touchpoints?.length || 0;
+      if (touchpointsCount === 0) return 'empty';
+      if (touchpointsCount >= 2) return 'complete';
       return 'started';
     }
   }

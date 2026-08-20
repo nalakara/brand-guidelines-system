@@ -349,6 +349,22 @@ export function getAvailableEntities(
     });
   }
 
+  // 17. Brand Expression: Touchpoints (Level 3.1)
+  if (modules.brandExpression?.touchpoints) {
+    modules.brandExpression.touchpoints.forEach((tp) => {
+      items.push({
+        reference: {
+          domain: 'brandExpression',
+          entityType: 'touchpoint',
+          entityId: tp.id,
+          label: getLocalizedText(tp.name, lang).text || 'Touchpoint'
+        },
+        name: getLocalizedText(tp.name, lang).text || 'Touchpoint',
+        categoryOrRole: tp.category
+      });
+    });
+  }
+
   return items.filter((item) => {
     const matchesDomain = !filterDomain || item.reference.domain === filterDomain;
     const matchesType = !filterType || item.reference.entityType === filterType;
@@ -421,6 +437,27 @@ export function findBackReferences(
           sourceName: headline,
           referencerName: headline,
           referencerDomain: 'messaging'
+        });
+      }
+    });
+  }
+
+  // Check Brand Expression Touchpoints (Level 3.1)
+  if (modules.brandExpression?.touchpoints) {
+    modules.brandExpression.touchpoints.forEach((tp) => {
+      const allTpRefs = [
+        ...(tp.appliedAssetRefs || []),
+        ...(tp.appliedRuleRefs || []),
+        ...(tp.governingEntityRefs || [])
+      ];
+      if (allTpRefs.some((r) => r.entityId === targetEntityId)) {
+        const tpName = getLocalizedText(tp.name, 'en').text || 'Touchpoint';
+        results.push({
+          sourceDomain: 'Brand Expression',
+          sourceEntityType: 'touchpoint',
+          sourceName: tpName,
+          referencerName: tpName,
+          referencerDomain: 'brandExpression'
         });
       }
     });

@@ -30,6 +30,7 @@ import { LayoutCompositionEditor } from './components/editors/LayoutCompositionE
 import { VisualAssetsEditor } from './components/editors/VisualAssetsEditor';
 import { VisualRulesEditor } from './components/editors/VisualRulesEditor';
 import { MessagingEditor } from './components/editors/MessagingEditor';
+import { TouchpointsEditor } from './components/editors/TouchpointsEditor';
 
 export const App: React.FC = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -358,6 +359,15 @@ export const App: React.FC = () => {
                     uiLanguage={uiLanguage}
                     contentLanguage={contentLanguage}
                     onChange={(updated) => handleUpdateModuleData('messaging', updated)}
+                  />
+                )}
+                {activeModuleId === 'brandExpression' && (
+                  <TouchpointsEditor
+                    data={activeBrand.modules.brandExpression}
+                    brand={activeBrand}
+                    uiLanguage={uiLanguage}
+                    contentLanguage={contentLanguage}
+                    onChange={(updated) => handleUpdateModuleData('brandExpression', updated)}
                   />
                 )}
               </>

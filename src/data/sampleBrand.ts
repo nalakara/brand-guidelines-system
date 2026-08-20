@@ -137,7 +137,8 @@ export const sampleBrand: Brand = {
     'visualBasics',
     'visualAssets',
     'visualRules',
-    'messaging'
+    'messaging',
+    'brandExpression'
   ],
   modules: {
     overview: {
@@ -1002,6 +1003,255 @@ export const sampleBrand: Brand = {
             id: 'Cicipi hasil panen musim ini'
           },
           contextChannel: 'Retail Menu'
+        }
+      ]
+    },
+    brandExpression: {
+      overview: {
+        en: 'Northstar Coffee manifests through tactile, unpretentious physical artifacts and calm, breathing digital interfaces. Every physical touchpoint is built with sustainable materials, muted natural tones, and precise typographic hierarchy.',
+        id: 'Northstar Coffee diwujudkan melalui artefak fisik yang alami dan antarmuka digital yang tenang. Setiap titik sentuh fisik dibuat dengan material ramah lingkungan, nada warna alami, dan hierarki tipografi yang presisi.'
+      },
+      touchpoints: [
+        {
+          id: 'tp-1',
+          name: {
+            en: 'Roastery Whole Bean 12oz Pouch',
+            id: 'Kantong Biji Kopi Roastery 12oz'
+          },
+          category: 'packaging',
+          channelContext: 'Retail & Online Store Packaging',
+          description: {
+            en: 'Primary retail packaging for single origin and blend coffee beans. Uses unbleached matte kraft paper with an inner biodegradable degas valve.',
+            id: 'Kemasan ritel utama untuk biji kopi single origin dan blend. Menggunakan kertas kraft matte alami dengan katup degas terurai hayati.'
+          },
+          specifications: {
+            dimensions: '130 × 200 × 70 mm (12oz / 340g)',
+            colorSpace: 'CMYK',
+            materialsFinish: {
+              en: 'Unbleached 120gsm Kraft with matte water-based flood coat and spot UV roast badge',
+              id: 'Kraft 120gsm alami dengan lapisan matte berbasis air dan spot UV pada lencana sangrai'
+            },
+            safeZonePadding: '8mm inner margin, 3mm bleed',
+            productionNotes: {
+              en: 'Ensure direct-trade transparency pricing table aligns with the 4-column subgrid on the back panel.',
+              id: 'Pastikan tabel harga transparansi perdagangan langsung sejajar dengan subgrid 4-kolom di panel belakang.'
+            }
+          },
+          guidelines: {
+            doCopy: {
+              en: 'Maintain generous parchment whitespace around the Northstar Wordmark on the front header.',
+              id: 'Pertahankan ruang kosong parchment yang lapang di sekitar Wordmark Northstar pada bagian atas depan.'
+            },
+            dontCopy: {
+              en: 'Do not print multi-color photographic graphics across the kraft paper grain.',
+              id: 'Jangan mencetak grafis fotografi penuh warna di atas serat kertas kraft.'
+            }
+          },
+          appliedAssetRefs: [
+            {
+              domain: 'visualAssets',
+              entityType: 'asset',
+              entityId: 'asset-1',
+              label: 'Northstar Wordmark Vector Package'
+            }
+          ],
+          appliedRuleRefs: [
+            {
+              domain: 'visualRules',
+              entityType: 'rule',
+              entityId: 'vr-1',
+              label: 'Primary Logo Minimum Clearspace'
+            },
+            {
+              domain: 'visualRules',
+              entityType: 'rule',
+              entityId: 'vr-2',
+              label: 'Warm Parchment Background Contrast'
+            }
+          ],
+          governingEntityRefs: [
+            {
+              domain: 'visualKnowledge',
+              entityType: 'logo',
+              entityId: 'logo-1',
+              label: 'Northstar Primary Wordmark'
+            },
+            {
+              domain: 'visualKnowledge',
+              entityType: 'color',
+              entityId: 'col-1',
+              label: 'Espresso Earth'
+            },
+            {
+              domain: 'visualKnowledge',
+              entityType: 'color',
+              entityId: 'col-2',
+              label: 'Warm Parchment'
+            }
+          ]
+        },
+        {
+          id: 'tp-2',
+          name: {
+            en: 'Specialty Cafe Takeaway Hot Cup',
+            id: 'Gelas Kopi Panas Bawa Pulang'
+          },
+          category: 'packaging',
+          channelContext: 'In-Store Beverage Takeaway',
+          description: {
+            en: 'Double-wall compostable hot paper cup featuring the centered compass star emblem on Oat Cream background.',
+            id: 'Gelas kertas panas berdinding ganda yang dapat dikomposkan dengan simbol bintang kompas di tengah di atas latar Oat Cream.'
+          },
+          specifications: {
+            dimensions: '8oz (240ml) & 12oz (355ml) Standard Cup',
+            colorSpace: 'CMYK',
+            materialsFinish: {
+              en: 'FSC-certified double-wall paperboard with plant-based PLA lining',
+              id: 'Karton bersertifikat FSC berdinding ganda dengan lapisan PLA nabati'
+            },
+            safeZonePadding: '12mm from top rim, 15mm from bottom seam',
+            productionNotes: {
+              en: 'Emblem mark printed centered at 36mm width with soy-based Espresso Earth ink.',
+              id: 'Simbol dicetak di tengah dengan lebar 36mm menggunakan tinta kedelai Espresso Earth.'
+            }
+          },
+          guidelines: {
+            doCopy: {
+              en: 'Keep all warning text in Inter Regular 7pt aligned along the lower curved baseline.',
+              id: 'Gunakan font Inter Regular 7pt untuk teks peringatan yang sejajar dengan lengkungan bawah.'
+            },
+            dontCopy: {
+              en: 'Do not add full-bleed ink coverage near the drinking rim.',
+              id: 'Jangan tambahkan cetakan tinta penuh di dekat area bibir gelas.'
+            }
+          },
+          appliedAssetRefs: [
+            {
+              domain: 'visualAssets',
+              entityType: 'asset',
+              entityId: 'asset-1',
+              label: 'Northstar Wordmark Vector Package'
+            }
+          ],
+          governingEntityRefs: [
+            {
+              domain: 'visualKnowledge',
+              entityType: 'logo',
+              entityId: 'logo-2',
+              label: 'Northstar Compass Star Emblem'
+            },
+            {
+              domain: 'visualKnowledge',
+              entityType: 'color',
+              entityId: 'col-5',
+              label: 'Oat Cream'
+            }
+          ]
+        },
+        {
+          id: 'tp-3',
+          name: {
+            en: 'Barista Service Apron Uniform',
+            id: 'Seragam Celemek Barista'
+          },
+          category: 'apparel',
+          channelContext: 'In-Store Retail & Hospitality',
+          description: {
+            en: 'Heavyweight organic cotton duck canvas barista apron with adjustable vegetable-tanned leather neck strap.',
+            id: 'Celemek barista bahan kanvas katun organik tebal dengan tali leher kulit nabati yang dapat disesuaikan.'
+          },
+          specifications: {
+            dimensions: '750 × 850 mm (One Size Fits All)',
+            colorSpace: 'PMS',
+            materialsFinish: {
+              en: '14oz Espresso-dyed duck canvas with antique brass rivets and single-color amber embroidery',
+              id: 'Kanvas katun 14oz warna espresso dengan paku keling kuningan antik dan bordir amber 1-warna'
+            },
+            safeZonePadding: 'Center chest pocket area: 80 × 80 mm max logo zone',
+            productionNotes: {
+              en: 'Northstar star emblem embroidered with Amber Glow thread (Pantone 1375 C equivalent).',
+              id: 'Simbol bintang dibordir dengan benang Amber Glow (setara Pantone 1375 C).'
+            }
+          },
+          guidelines: {
+            doCopy: {
+              en: 'Ensure leather straps are conditioned before cafe launch.',
+              id: 'Pastikan tali kulit dirawat sebelum pembukaan kafe.'
+            },
+            dontCopy: {
+              en: 'Never screenprint over canvas seams.',
+              id: 'Jangan pernah menyablon di atas jahitan kanvas.'
+            }
+          },
+          governingEntityRefs: [
+            {
+              domain: 'visualKnowledge',
+              entityType: 'logo',
+              entityId: 'logo-2',
+              label: 'Northstar Compass Star Emblem'
+            },
+            {
+              domain: 'visualKnowledge',
+              entityType: 'color',
+              entityId: 'col-3',
+              label: 'Amber Glow'
+            }
+          ]
+        },
+        {
+          id: 'tp-4',
+          name: {
+            en: 'Morning Ritual Instagram Story Grid',
+            id: 'Templat Cerita Instagram Ritual Pagi'
+          },
+          category: 'socialMedia',
+          channelContext: 'Digital Social Content',
+          description: {
+            en: 'Calm, documentary-style social storytelling template featuring morning light photography and Fraunces editorial quotes.',
+            id: 'Templat cerita media sosial bergaya dokumenter yang menampilkan fotografi cahaya pagi dan kutipan editorial Fraunces.'
+          },
+          specifications: {
+            dimensions: '1080 × 1920 px',
+            aspectRatio: '9:16',
+            colorSpace: 'RGB',
+            safeZonePadding: '250px top header safe zone, 300px bottom interaction zone',
+            productionNotes: {
+              en: 'Export as sRGB 85% JPEG or H.264 MP4 at 30fps.',
+              id: 'Ekspor sebagai JPEG sRGB 85% atau MP4 H.264 pada 30fps.'
+            }
+          },
+          guidelines: {
+            doCopy: {
+              en: 'Use documentary morning natural lighting and maximum 2 lines of Fraunces serif text.',
+              id: 'Gunakan pencahayaan alami pagi dokumenter dan maksimal 2 baris teks serif Fraunces.'
+            },
+            dontCopy: {
+              en: 'Do not use animated flashing stickers or high-saturation neon colors.',
+              id: 'Jangan gunakan stiker animasi mencolok atau warna neon saturasi tinggi.'
+            }
+          },
+          appliedRuleRefs: [
+            {
+              domain: 'visualRules',
+              entityType: 'rule',
+              entityId: 'vr-3',
+              label: 'Authentic Morning Lighting Requirement'
+            }
+          ],
+          governingEntityRefs: [
+            {
+              domain: 'visualKnowledge',
+              entityType: 'font',
+              entityId: 'font-1',
+              label: 'Fraunces'
+            },
+            {
+              domain: 'visualKnowledge',
+              entityType: 'imageryDirection',
+              entityId: 'img-dir-1',
+              label: 'Documentary Morning Rituals'
+            }
+          ]
         }
       ]
     }

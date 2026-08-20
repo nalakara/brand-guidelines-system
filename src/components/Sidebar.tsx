@@ -13,6 +13,7 @@ import {
   BookOpen,
   Image,
   FileCheck,
+  LayoutTemplate,
   Plus,
   SlidersHorizontal,
   ChevronDown,
@@ -44,7 +45,8 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   Megaphone: <Megaphone size={16} />,
   BookOpen: <BookOpen size={16} />,
   Image: <Image size={16} />,
-  FileCheck: <FileCheck size={16} />
+  FileCheck: <FileCheck size={16} />,
+  LayoutTemplate: <LayoutTemplate size={16} />
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({

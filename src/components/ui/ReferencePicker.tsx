@@ -15,6 +15,8 @@ interface ReferencePickerProps {
   uiLanguage: Language;
   filterDomain?: EntityDomain;
   filterType?: EntityType;
+  allowedEntityTypes?: EntityType[];
+  allowedDomains?: EntityDomain[];
   selectedEntityIds?: string[];
   onSelect: (reference: EntityReference) => void;
   onClose: () => void;
@@ -26,7 +28,8 @@ const DOMAIN_TABS: { domain?: EntityDomain; labelKey: string }[] = [
   { domain: 'foundation', labelKey: 'pickerDomainFoundation' },
   { domain: 'visualKnowledge', labelKey: 'pickerDomainVisualKnowledge' },
   { domain: 'visualAssets', labelKey: 'pickerDomainVisualAssets' },
-  { domain: 'visualRules', labelKey: 'pickerDomainVisualRules' }
+  { domain: 'visualRules', labelKey: 'pickerDomainVisualRules' },
+  { domain: 'brandExpression', labelKey: 'pickerDomainBrandExpression' }
 ];
 
 export const ReferencePicker: React.FC<ReferencePickerProps> = ({
@@ -34,6 +37,8 @@ export const ReferencePicker: React.FC<ReferencePickerProps> = ({
   uiLanguage,
   filterDomain,
   filterType,
+  allowedEntityTypes,
+  allowedDomains,
   selectedEntityIds = [],
   onSelect,
   onClose,
@@ -45,6 +50,12 @@ export const ReferencePicker: React.FC<ReferencePickerProps> = ({
   const allEntities = getAvailableEntities(brand, activeDomain, filterType);
 
   const filteredEntities = allEntities.filter((item) => {
+    if (allowedEntityTypes && allowedEntityTypes.length > 0) {
+      if (!allowedEntityTypes.includes(item.reference.entityType)) return false;
+    }
+    if (allowedDomains && allowedDomains.length > 0) {
+      if (!allowedDomains.includes(item.reference.domain)) return false;
+    }
     const q = searchQuery.toLowerCase().trim();
     if (!q) return true;
     return (
