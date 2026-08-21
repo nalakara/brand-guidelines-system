@@ -1,15 +1,18 @@
 import React from 'react';
 import { Brand, Language } from '../types/brand';
+import { ExperienceMode } from '../types/guidance';
 import { t } from '../i18n/translations';
-import { Menu, Eye, Edit3, SlidersHorizontal, Globe } from 'lucide-react';
+import { Menu, Eye, Edit3, SlidersHorizontal, Globe, Compass, Layout } from 'lucide-react';
 
 interface HeaderProps {
   brand: Brand;
   viewMode: 'edit' | 'preview';
+  experienceMode?: ExperienceMode;
   isSaving: boolean;
   uiLanguage: Language;
   contentLanguage: Language;
   onToggleViewMode: (mode: 'edit' | 'preview') => void;
+  onToggleExperienceMode?: (mode: ExperienceMode) => void;
   onToggleMobileMenu: () => void;
   onOpenModuleManager: () => void;
   onChangeUiLanguage: (lang: Language) => void;
@@ -19,10 +22,12 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   brand,
   viewMode,
+  experienceMode = 'guided',
   isSaving,
   uiLanguage,
   contentLanguage,
   onToggleViewMode,
+  onToggleExperienceMode,
   onToggleMobileMenu,
   onOpenModuleManager,
   onChangeUiLanguage,
@@ -139,6 +144,26 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <SlidersHorizontal size={14} /> {t('manageModules', uiLanguage)}
         </button>
+
+        {/* Experience Mode Toggle (Guided vs Studio) */}
+        {onToggleExperienceMode && viewMode === 'edit' && (
+          <div className="view-mode-toggle" style={{ marginRight: '4px' }}>
+            <button
+              className={`view-mode-btn ${experienceMode === 'guided' ? 'active' : ''}`}
+              onClick={() => onToggleExperienceMode('guided')}
+              title={t('guidedModeDesc', uiLanguage)}
+            >
+              <Compass size={14} /> {t('guidedMode', uiLanguage)}
+            </button>
+            <button
+              className={`view-mode-btn ${experienceMode === 'studio' ? 'active' : ''}`}
+              onClick={() => onToggleExperienceMode('studio')}
+              title={t('studioModeDesc', uiLanguage)}
+            >
+              <Layout size={14} /> {t('studioMode', uiLanguage)}
+            </button>
+          </div>
+        )}
 
         {/* View Mode Toggle */}
         <div className="view-mode-toggle">

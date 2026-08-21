@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Brand, ModuleId, Language } from './types/brand';
+import { ExperienceMode } from './types/guidance';
 import {
   loadBrands,
   saveSingleBrand,
@@ -14,6 +15,7 @@ import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { ModuleManagerModal } from './components/ModuleManagerModal';
 import { GuidelinePreview } from './components/preview/GuidelinePreview';
+import { GuidedBrandExperience } from './components/guidance/GuidedBrandExperience';
 
 // Editors
 import { OverviewEditor } from './components/editors/OverviewEditor';
@@ -39,6 +41,7 @@ export const App: React.FC = () => {
   const [activeBrandId, setActiveBrandId] = useState<string>('');
   const [activeModuleId, setActiveModuleId] = useState<ModuleId>('overview');
   const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit');
+  const [experienceMode, setExperienceMode] = useState<ExperienceMode>('guided');
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isModuleManagerOpen, setIsModuleManagerOpen] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
@@ -71,7 +74,15 @@ export const App: React.FC = () => {
 
     const savedContentLang = localStorage.getItem('app_content_lang') as Language;
     if (savedContentLang === 'en' || savedContentLang === 'id') setContentLanguage(savedContentLang);
+
+    const savedExpMode = localStorage.getItem('app_experience_mode') as ExperienceMode;
+    if (savedExpMode === 'guided' || savedExpMode === 'studio') setExperienceMode(savedExpMode);
   }, []);
+
+  const handleToggleExperienceMode = (mode: ExperienceMode) => {
+    setExperienceMode(mode);
+    localStorage.setItem('app_experience_mode', mode);
+  };
 
   const activeBrand = brands.find(b => b.id === activeBrandId) || brands[0];
 
@@ -185,10 +196,12 @@ export const App: React.FC = () => {
         <Header
           brand={activeBrand}
           viewMode={viewMode}
+          experienceMode={experienceMode}
           isSaving={isSaving}
           uiLanguage={uiLanguage}
           contentLanguage={contentLanguage}
           onToggleViewMode={setViewMode}
+          onToggleExperienceMode={handleToggleExperienceMode}
           onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           onOpenModuleManager={() => setIsModuleManagerOpen(true)}
           onChangeUiLanguage={handleChangeUiLang}
@@ -198,23 +211,32 @@ export const App: React.FC = () => {
         <main className="content-area">
           <div className="content-max-width">
             {viewMode === 'edit' ? (
-              <>
-                {activeModuleId === 'overview' && (
-                  <OverviewEditor
-                    data={activeBrand.modules.overview}
-                    uiLanguage={uiLanguage}
-                    contentLanguage={contentLanguage}
-                    onChange={(updated) => handleUpdateModuleData('overview', updated)}
-                  />
-                )}
-                {activeModuleId === 'strategy' && (
-                  <StrategyEditor
-                    data={activeBrand.modules.strategy}
-                    uiLanguage={uiLanguage}
-                    contentLanguage={contentLanguage}
-                    onChange={(updated) => handleUpdateModuleData('strategy', updated)}
-                  />
-                )}
+              experienceMode === 'guided' ? (
+                <GuidedBrandExperience
+                  brand={activeBrand}
+                  uiLanguage={uiLanguage}
+                  contentLanguage={contentLanguage}
+                  onUpdateModuleData={handleUpdateModuleData}
+                  onOpenModuleManager={() => setIsModuleManagerOpen(true)}
+                />
+              ) : (
+                <>
+                  {activeModuleId === 'overview' && (
+                    <OverviewEditor
+                      data={activeBrand.modules.overview}
+                      uiLanguage={uiLanguage}
+                      contentLanguage={contentLanguage}
+                      onChange={(updated) => handleUpdateModuleData('overview', updated)}
+                    />
+                  )}
+                  {activeModuleId === 'strategy' && (
+                    <StrategyEditor
+                      data={activeBrand.modules.strategy}
+                      uiLanguage={uiLanguage}
+                      contentLanguage={contentLanguage}
+                      onChange={(updated) => handleUpdateModuleData('strategy', updated)}
+                    />
+                  )}
                 {activeModuleId === 'positioning' && (
                   <PositioningEditor
                     data={activeBrand.modules.positioning}
@@ -381,16 +403,17 @@ export const App: React.FC = () => {
                     onChange={(updated) => handleUpdateModuleData('brandArchitecture', updated)}
                   />
                 )}
-                {activeModuleId === 'brandExpression' && (
-                  <TouchpointsEditor
-                    data={activeBrand.modules.brandExpression}
-                    brand={activeBrand}
-                    uiLanguage={uiLanguage}
-                    contentLanguage={contentLanguage}
-                    onChange={(updated) => handleUpdateModuleData('brandExpression', updated)}
-                  />
-                )}
-              </>
+                  {activeModuleId === 'brandExpression' && (
+                    <TouchpointsEditor
+                      data={activeBrand.modules.brandExpression}
+                      brand={activeBrand}
+                      uiLanguage={uiLanguage}
+                      contentLanguage={contentLanguage}
+                      onChange={(updated) => handleUpdateModuleData('brandExpression', updated)}
+                    />
+                  )}
+                </>
+              )
             ) : (
               <GuidelinePreview
                 brand={activeBrand}

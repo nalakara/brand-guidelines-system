@@ -15,6 +15,10 @@ export const UI_TRANSLATIONS: Record<Language, Record<string, string>> = {
     editSection: 'Edit Section',
     guidelineVersion: 'Brand Guidelines v0.1',
     fallbackNotice: 'Showing EN fallback',
+    guidedMode: 'Guided Mode',
+    studioMode: 'Studio Mode',
+    guidedModeDesc: 'Assisted learning journey with contextual guidance',
+    studioModeDesc: 'Direct workspace for uninterrupted editing',
     
     // Module Names
     moduleOverview: 'Brand Overview',
@@ -818,6 +822,10 @@ export const UI_TRANSLATIONS: Record<Language, Record<string, string>> = {
     editSection: 'Edit Bagian',
     guidelineVersion: 'Panduan Merek v0.1',
     fallbackNotice: 'Menampilkan cadangan EN',
+    guidedMode: 'Mode Terpandu',
+    studioMode: 'Mode Studio',
+    guidedModeDesc: 'Alur belajar terpandu dengan arahan kontekstual',
+    studioModeDesc: 'Ruang kerja langsung untuk penyuntingan mandiri',
     
     // Module Names
     moduleOverview: 'Gambaran Umum Merek',

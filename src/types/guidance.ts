@@ -1,8 +1,8 @@
 /**
- * Phase 4.1C — Guidance Content Model Types
+ * Phase 4.1C / 4.2A — Guidance Types
  * 
- * Provides strongly typed pedagogical structures for the Guided Brand Design Layer.
- * Follows PHASE_4_1B_GUIDANCE_CURRICULUM.md specifications.
+ * Provides strongly typed pedagogical structures and interaction state models
+ * for the Guided Brand Design Layer.
  * 
  * Zero modification to frozen Brand Knowledge types.
  */
@@ -17,9 +17,24 @@ export type GuidanceStageId =
   | 'stage5_govern'
   | 'stage6_apply';
 
+export type ExperienceMode = 'guided' | 'studio';
+
 export type DifficultyTier = 'beginner' | 'intermediate' | 'advanced';
 
 export type DiagnosticSeverity = 'error' | 'warning' | 'recommendation' | 'tip';
+
+/**
+ * 5 Distinct Guidance Interaction States (Pedagogical Progress)
+ */
+export type TopicGuidanceStatus = 'notStarted' | 'viewed' | 'workedOn' | 'completed' | 'skipped';
+
+export type RecommendationReasonCode =
+  | 'firstIncompleteStage'
+  | 'activeModuleIncomplete'
+  | 'upstreamDependency'
+  | 'revisitSuggested'
+  | 'moduleRecentlyChanged'
+  | 'optionalExploration';
 
 /**
  * 9 Pedagogical Block Types specified in Curriculum
@@ -120,4 +135,33 @@ export interface GuidanceStage {
   designerMentalModel: LocalizedString;
   primaryModuleIds: ModuleId[];
   topics: GuidanceTopic[];
+}
+
+/**
+ * Guidance Interaction State Model (Pure UI / Session state)
+ */
+export interface GuidanceInteractionState {
+  topicStatuses?: Record<string, TopicGuidanceStatus>;
+  dismissedGuidanceIds?: string[];
+  activeStageId?: GuidanceStageId;
+  activeTopicId?: string;
+  difficultyPreference?: DifficultyTier;
+}
+
+export interface GuidanceRecommendation {
+  stageId: GuidanceStageId;
+  moduleId: ModuleId;
+  topicId?: string;
+  reasonCode: RecommendationReasonCode;
+  relatedModuleId?: ModuleId;
+  explanationKey?: string;
+}
+
+export interface RevisitSuggestion {
+  id: string;
+  sourceModuleId: ModuleId;
+  targetStageId: GuidanceStageId;
+  targetModuleId: ModuleId;
+  reasonCode: RecommendationReasonCode;
+  triggerDescriptionKey: string;
 }
